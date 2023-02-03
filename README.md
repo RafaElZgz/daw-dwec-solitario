@@ -10,7 +10,7 @@
 ### Intrucciones
 
 -   **Instalación** - Para instalar las dependencias del proyecto, ejecutar `yarn install`
--   **Ejecución** - Para ejecutar el proyecto, ejecutar `yarn dev`
+-   **Ejecución** - Para probar el proyecto, ejecutar el comando `yarn dev`
 -   **Compilación** - No hay versión de producción
 
 ### Tecnologías
