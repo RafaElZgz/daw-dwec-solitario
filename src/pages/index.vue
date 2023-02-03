@@ -123,6 +123,7 @@ function onDrop(event: DragEvent, new_pile_id: number) {
     const card = initial_pile.array.find((card) => card.id == parseInt(cardID));
 
     initial_pile.array.splice(card!.pile_position, 1);
+
     card!.current_pile = new_pile_id;
     card!.pile_position = 0;
 
@@ -144,7 +145,7 @@ function onDrop(event: DragEvent, new_pile_id: number) {
             break;
     }
 
-    makeDraggable(card!.id - 1);
+    setTimeout(() => makeDraggable(card!.id - 1), 1000);
 
     amount_movements += 1;
 }
@@ -211,10 +212,50 @@ onMounted(() => {
         <main class="flex h-full py-4">
             <div class="m-auto main_grid w-[48rem] h-[40rem]">
                 <!-- Piles -->
-                <div class="bg-green-600 rounded-lg pile_1_box"></div>
-                <div class="bg-green-600 rounded-lg pile_2_box"></div>
-                <div class="bg-green-600 rounded-lg pile_3_box"></div>
-                <div class="bg-green-600 rounded-lg pile_4_box"></div>
+                <div
+                    @drop="onDrop($event, pile_1.id)"
+                    @dragover.prevent
+                    @dragenter.prevent
+                    class="flex bg-green-600 rounded-lg pile_1_box">
+                    <img
+                        v-for="card in pile_1.array"
+                        draggable="false"
+                        :src="`/cards/${card.suit}/${card.value}.png`"
+                        class="w-24 h-40 m-auto rounded-lg select-none" />
+                </div>
+                <div
+                    @drop="onDrop($event, pile_2.id)"
+                    @dragover.prevent
+                    @dragenter.prevent
+                    class="flex bg-green-600 rounded-lg pile_2_box">
+                    <img
+                        v-for="card in pile_2.array"
+                        draggable="false"
+                        :src="`/cards/${card.suit}/${card.value}.png`"
+                        class="w-24 h-40 m-auto rounded-lg select-none" />
+                </div>
+                <div
+                    @drop="onDrop($event, pile_3.id)"
+                    @dragover.prevent
+                    @dragenter.prevent
+                    class="flex bg-green-600 rounded-lg pile_3_box">
+                    <img
+                        v-for="card in pile_3.array"
+                        draggable="false"
+                        :src="`/cards/${card.suit}/${card.value}.png`"
+                        class="w-24 h-40 m-auto rounded-lg select-none" />
+                </div>
+                <div
+                    @drop="onDrop($event, pile_4.id)"
+                    @dragover.prevent
+                    @dragenter.prevent
+                    class="flex bg-green-600 rounded-lg pile_4_box">
+                    <img
+                        v-for="card in pile_4.array"
+                        draggable="false"
+                        :src="`/cards/${card.suit}/${card.value}.png`"
+                        class="w-24 h-40 m-auto rounded-lg select-none" />
+                </div>
                 <!-- Leftover Cards -->
                 <div
                     @drop="onDrop($event, leftover_pile.id)"
@@ -225,7 +266,7 @@ onMounted(() => {
                         v-for="card in leftover_pile.array"
                         draggable="false"
                         :src="`/cards/${card.suit}/${card.value}.png`"
-                        class="absolute w-24 h-40 m-auto rounded-lg select-none" />
+                        class="w-24 h-40 m-auto rounded-lg select-none" />
                 </div>
                 <!-- Restart Button -->
                 <div class="flex border border-gray-400 buttons_box">
