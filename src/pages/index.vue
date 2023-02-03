@@ -26,8 +26,8 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const amount_cards = 48;
-const cards_per_suite = 12;
+const amount_cards = 4;
+const cards_per_suite = 1;
 
 let amount_movements = 0;
 let played_time = 0;
@@ -49,7 +49,15 @@ let current_card_id = amount_cards - 1;
     Main functions
 */
 
-function restart() {}
+function restart() {
+    // TODO : Hay que arreglar este método
+    window.location.reload();
+}
+
+function endGame() {
+    // TODO : Hay que arreglar este método
+    restart();
+}
 
 /*
     Operation functions
@@ -103,6 +111,7 @@ function clearPiles() {
 // Card functions
 
 function makeDraggable(card_id: number) {
+    console.log(card_id);
     const card_element = document.getElementById(`card-${card_id}`)!;
     card_element.draggable = true;
     card_element.classList.add('cursor-grab');
@@ -123,6 +132,15 @@ function onDrop(event: DragEvent, new_pile_id: number) {
     const card = initial_pile.array.find((card) => card.id == parseInt(cardID));
 
     initial_pile.array.splice(card!.pile_position, 1);
+
+    //TODO: Comprobar si la carta se puede mover a la pila
+
+    if (card!.pile_position - 1 < 0) {
+        endGame();
+        return;
+    }
+
+    current_card_id = initial_pile.array[card!.pile_position - 1].id; // ID de la carta siguiente
 
     card!.current_pile = new_pile_id;
     card!.pile_position = 0;
@@ -145,7 +163,7 @@ function onDrop(event: DragEvent, new_pile_id: number) {
             break;
     }
 
-    setTimeout(() => makeDraggable(card!.id - 1), 1000);
+    setTimeout(() => makeDraggable(current_card_id), 1000);
 
     amount_movements += 1;
 }
