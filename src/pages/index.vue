@@ -149,6 +149,11 @@ function showCards(pile: Pile) {
     });
 }
 
+function addCardToPile(card: Card, pile: Pile) {
+    card.pile_position = pile.array.length - 1;
+    pile.array.push(card);
+}
+
 function clearPile(pile: Pile) {
     pile.array.forEach((card) => {
         document.getElementById(`card-${card.id}`)!.remove();
@@ -189,24 +194,19 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
 
     switch (new_pile_id) {
         case 1:
-            card!.pile_position = pile_1.array.length - 1;
-            pile_1.array.push(card!);
+            addCardToPile(card!, pile_1);
             break;
         case 2:
-            card!.pile_position = pile_2.array.length - 1;
-            pile_2.array.push(card!);
+            addCardToPile(card!, pile_2);
             break;
         case 3:
-            card!.pile_position = pile_3.array.length - 1;
-            pile_3.array.push(card!);
+            addCardToPile(card!, pile_3);
             break;
         case 4:
-            card!.pile_position = pile_4.array.length - 1;
-            pile_4.array.push(card!);
+            addCardToPile(card!, pile_4);
             break;
         case 5:
-            card!.pile_position = leftover_pile.array.length - 1;
-            leftover_pile.array.push(card!);
+            addCardToPile(card!, leftover_pile);
             break;
     }
 
