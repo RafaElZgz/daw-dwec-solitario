@@ -207,16 +207,13 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
 
     amount_movements += 1;
 
-    // TODO : Arreglar la comprobación de cuantas cartas que quedan por jugar y cuantas cartas hay en la pila de descartes
-
     if (initial_pile.array.length == 0) {
         if (leftover_pile.array.length == 0) {
             endGame();
             return;
-        } else {
-            initial_pile.array = await shuffleCards(leftover_pile.array);
-            leftover_pile.array = [];
         }
+        initial_pile.array = await shuffleCards(leftover_pile.array);
+        leftover_pile.array = [];
         showCards(initial_pile);
         await alignCards(initial_pile.array);
     }
