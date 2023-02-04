@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { initModals } from 'flowbite';
-import { InformationCircleIcon, XMarkIcon } from '@heroicons/vue/24/outline';
+import {
+    ExclamationCircleIcon,
+    FaceSmileIcon,
+    XMarkIcon,
+} from '@heroicons/vue/24/outline';
 
 /*
     Definitions
@@ -65,7 +69,7 @@ function endGame() {
     // TODO : Hay que desarrollar este método
     setTimeout(() => {
         isPlaying = false;
-        alert('¡Has ganado!');
+        document.getElementById('win_modal_button')!.click();
     }, 1000);
 }
 
@@ -419,8 +423,8 @@ onMounted(() => {
                         <span class="sr-only">Reiniciar partida</span>
                     </button>
                     <div class="p-6 text-center">
-                        <InformationCircleIcon
-                            class="mx-auto mb-4 text-gray-400 w-14 h-14" />
+                        <ExclamationCircleIcon
+                            class="mx-auto mb-4 text-primary-400 w-14 h-14" />
                         <h3 class="mb-5 text-lg font-normal text-gray-500">
                             ¿Seguro que quieres volver a iniciar la partida?
                         </h3>
@@ -435,6 +439,69 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+        <!-- Win Modal -->
+        <button
+            type="button"
+            data-modal-target="win_modal"
+            data-modal-toggle="win_modal"
+            id="win_modal_button"
+            class="hidden">
+            Partida ganada
+        </button>
+        <div
+            id="win_modal"
+            data-modal-backdrop="static"
+            data-modal-closable="false"
+            tabindex="-1"
+            class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full bg-gray-400/50">
+            <div class="relative w-full h-full max-w-md m-auto md:h-auto">
+                <div class="relative bg-white rounded-lg shadow">
+                    <button
+                        type="button"
+                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                        data-modal-hide="win_modal">
+                        <XMarkIcon class="w-5 h-5" />
+                        <span class="sr-only">Partida ganada</span>
+                    </button>
+                    <div class="p-6 text-center">
+                        <FaceSmileIcon
+                            class="mx-auto mb-4 text-green-400 w-14 h-14" />
+                        <h3 class="mb-5 text-lg font-normal text-gray-500">
+                            ¡Has ganado! ¿Quieres volver a jugar?
+                        </h3>
+                        <button
+                            data-modal-hide="win_modal"
+                            type="button"
+                            @click="restart()"
+                            class="text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mx-auto">
+                            Sí
+                        </button>
+                        <div>
+                            <hr class="my-6" />
+                            <h3
+                                class="my-2 text-lg font-semibold text-primary-600">
+                                Estadísticas
+                            </h3>
+                            <ul>
+                                <li>
+                                    Tiempo -
+                                    <span class="text-primary-600">
+                                        {{ played_time_string }}
+                                    </span>
+                                </li>
+                                <li>
+                                    Movimientos -
+                                    <span class="text-primary-600">
+                                        {{ amount_movements }}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End -->
     </div>
 </template>
 
