@@ -50,19 +50,17 @@ let pile_2 = { id: 2, array: [] } as Pile;
 let pile_3 = { id: 3, array: [] } as Pile;
 let pile_4 = { id: 4, array: [] } as Pile;
 
-let current_card_id = amount_cards - 1;
-
 /*
     Main functions
 */
 
 function restart() {
-    // TODO : Hay que arreglar este método
+    // TODO : Hay que desarrollar este método
     window.location.reload();
 }
 
 function endGame() {
-    // TODO : Hay que arreglar este método
+    // TODO : Hay que desarrollar este método
     restart();
 }
 
@@ -100,7 +98,6 @@ function generateCards(): Card[] {
 function shuffleCards(pile: Card[]): Card[] {
     let result_pile = pile.sort((a, b) => 0.5 - Math.random()) as Card[];
     result_pile.forEach((card, index) => {
-        card.id = index;
         card.pile_position = index;
     });
     return result_pile;
@@ -117,8 +114,8 @@ function clearPiles() {
 
 // Card functions
 
-function makeDraggable(card_id: number) {
-    const card_element = document.getElementById(`card-${card_id}`)!;
+function makeDraggable(card: Card) {
+    const card_element = document.getElementById(`card-${card.id}`)!;
     card_element.draggable = true;
     card_element.classList.add('cursor-grab');
 }
@@ -126,11 +123,19 @@ function makeDraggable(card_id: number) {
 // Drag and drop functions
 
 function dragStart(event: DragEvent, card: Card) {
+    console.log(card);
+
     event.dataTransfer!.setData('cardID', card.id.toString());
 
     if (!isPlaying) {
         isPlaying = true;
     }
+}
+
+function dragOver(event: DragEvent, pile: Pile) {
+    event.preventDefault();
+
+    // TODO : Comprobar si la carta se puede mover a la pila
 }
 
 function onDrop(event: DragEvent, new_pile_id: number) {
@@ -139,23 +144,17 @@ function onDrop(event: DragEvent, new_pile_id: number) {
 
     initial_pile.array.splice(card!.pile_position, 1);
 
-    // TODO: Comprobar si la carta se puede mover a la pila
+    // TODO : Agregar una comprobación de cuantas cartas que quedan por jugar y cuantas cartas hay en la pila de descartes
 
-    // TODO : Mejorar la comprobación de las cartas que quedan por jugar y la pila de descartes
-    if (card!.pile_position - 1 < 0 && leftover_pile.array.length === 0) {
+    if (card!.pile_position - 1 < 0) {
         endGame();
-        return;
-    } else if (card!.pile_position - 1 < 0 && leftover_pile.array.length > 0) {
-        initial_pile.array = shuffleCards(leftover_pile.array);
-        leftover_pile.array = [];
-        current_card_id = initial_pile.array[initial_pile.array.length - 1].id;
-        setTimeout(() => makeDraggable(current_card_id), 1000);
         return;
     }
 
-    current_card_id = initial_pile.array[card!.pile_position - 1].id; // ID de la carta siguiente
-
-    setTimeout(() => makeDraggable(current_card_id), 1000);
+    setTimeout(
+        () => makeDraggable(initial_pile.array[initial_pile.array.length - 1]),
+        1000
+    );
 
     card!.current_pile = new_pile_id;
 
@@ -187,13 +186,13 @@ function onDrop(event: DragEvent, new_pile_id: number) {
 
 // Visual functions
 
-function alignCards() {
-    for (let i = 0; i < amount_cards; i++) {
-        const card = document.getElementById(`card-${i}`)!;
+function alignCards(cards: Card[]) {
+    cards.forEach((card) => {
+        const card_element = document.getElementById(`card-${card.id}`)!;
 
-        card.style.top = `${i * 3}px`;
-        card.style.left = `${i * 6}px`;
-    }
+        card_element.style.top = `${card.pile_position * 3}px`;
+        card_element.style.left = `${card.pile_position * 6}px`;
+    });
 }
 
 function updateTime() {
@@ -215,8 +214,8 @@ onBeforeMount(() => {
 onMounted(() => {
     initModals();
     setInterval(() => updateTime(), 1000);
-    alignCards();
-    makeDraggable(current_card_id);
+    alignCards(initial_pile.array);
+    makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 });
 </script>
 
@@ -249,7 +248,7 @@ onMounted(() => {
                 <!-- Piles -->
                 <div
                     @drop="onDrop($event, pile_1.id)"
-                    @dragover.prevent
+                    @dragover="dragOver($event, pile_1)"
                     @dragenter.prevent
                     class="relative flex bg-green-600 rounded-lg pile_1_box">
                     <div
@@ -267,7 +266,7 @@ onMounted(() => {
                 </div>
                 <div
                     @drop="onDrop($event, pile_2.id)"
-                    @dragover.prevent
+                    @dragover="dragOver($event, pile_2)"
                     @dragenter.prevent
                     class="relative flex bg-green-600 rounded-lg pile_2_box">
                     <div
@@ -285,7 +284,7 @@ onMounted(() => {
                 </div>
                 <div
                     @drop="onDrop($event, pile_3.id)"
-                    @dragover.prevent
+                    @dragover="dragOver($event, pile_3)"
                     @dragenter.prevent
                     class="relative flex bg-green-600 rounded-lg pile_3_box">
                     <div
@@ -303,7 +302,7 @@ onMounted(() => {
                 </div>
                 <div
                     @drop="onDrop($event, pile_4.id)"
-                    @dragover.prevent
+                    @dragover="dragOver($event, pile_4)"
                     @dragenter.prevent
                     class="relative flex bg-green-600 rounded-lg pile_4_box">
                     <div
