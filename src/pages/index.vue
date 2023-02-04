@@ -336,14 +336,16 @@ onMounted(() => {
                 </div>
                 <!-- Main Pile -->
                 <div
-                    class="relative flex bg-gradient-to-r from-green-600 via-green-500 to-green-600 main_pile_box">
-                    <img
-                        v-for="card in initial_pile.array"
-                        draggable="false"
-                        @dragstart="dragStart($event, card)"
-                        :id="`card-${card.id}`"
-                        :src="`/cards/${card.suit}/${card.value}.png`"
-                        class="absolute w-24 h-40 transform rounded-lg select-none" />
+                    class="flex bg-gradient-to-r from-green-600 via-green-500 to-green-600 main_pile_box">
+                    <div class="relative flex w-full h-full m-4">
+                        <img
+                            v-for="card in initial_pile.array"
+                            draggable="false"
+                            @dragstart="dragStart($event, card)"
+                            :id="`card-${card.id}`"
+                            :src="`/cards/${card.suit}/${card.value}.png`"
+                            class="absolute w-24 h-40 transform rounded-lg select-none" />
+                    </div>
                 </div>
             </div>
         </main>
