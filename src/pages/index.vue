@@ -26,14 +26,12 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const amount_cards = 4;
-const cards_per_suite = amount_cards / suits.length;
+const cards_per_suite = 4;
+const amount_cards = cards_per_suite * suits.length;
 
 // Valid configuration check
-if (amount_cards % 2 != 0 || amount_cards < suits.length) {
-    throw new Error(
-        `La cantidad de cartas debe ser un número par, mayor a ${suits.length}`
-    );
+if (cards_per_suite > 12) {
+    throw new Error(`La cantidad de cartas por mazo debe ser menor a 12`);
 }
 
 let amount_movements = 0;
@@ -67,6 +65,10 @@ function endGame() {
 /*
     Operation functions
 */
+
+function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 function generateCards(): Card[] {
     let pile = [] as Card[];
@@ -123,8 +125,6 @@ function makeDraggable(card: Card) {
 // Drag and drop functions
 
 function dragStart(event: DragEvent, card: Card) {
-    console.log(card);
-
     event.dataTransfer!.setData('cardID', card.id.toString());
 
     if (!isPlaying) {
@@ -138,25 +138,15 @@ function dragOver(event: DragEvent, pile: Pile) {
     // TODO : Comprobar si la carta se puede mover a la pila
 }
 
-function onDrop(event: DragEvent, new_pile_id: number) {
+async function onDrop(event: DragEvent, new_pile_id: number) {
     const cardID = event.dataTransfer!.getData('cardID');
     const card = initial_pile.array.find((card) => card.id == parseInt(cardID));
 
     initial_pile.array.splice(card!.pile_position, 1);
 
-    // TODO : Agregar una comprobación de cuantas cartas que quedan por jugar y cuantas cartas hay en la pila de descartes
-
-    if (card!.pile_position - 1 < 0) {
-        endGame();
-        return;
-    }
-
-    setTimeout(
-        () => makeDraggable(initial_pile.array[initial_pile.array.length - 1]),
-        1000
-    );
-
     card!.current_pile = new_pile_id;
+
+    await sleep(200);
 
     switch (new_pile_id) {
         case 1:
@@ -182,17 +172,34 @@ function onDrop(event: DragEvent, new_pile_id: number) {
     }
 
     amount_movements += 1;
+
+    // TODO : Agregar una comprobación de cuantas cartas que quedan por jugar y cuantas cartas hay en la pila de descartes
+
+    if (initial_pile.array.length == 0) {
+        if (leftover_pile.array.length == 0) {
+            endGame();
+            return;
+        } else {
+            initial_pile.array = shuffleCards(leftover_pile.array);
+            leftover_pile.array = [];
+            alignCards(initial_pile.array);
+        }
+    }
+
+    makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 }
 
 // Visual functions
 
-function alignCards(cards: Card[]) {
-    cards.forEach((card) => {
+async function alignCards(cards: Card[]) {
+    for (const card of cards) {
         const card_element = document.getElementById(`card-${card.id}`)!;
 
         card_element.style.top = `${card.pile_position * 3}px`;
         card_element.style.left = `${card.pile_position * 6}px`;
-    });
+
+        await sleep(20);
+    }
 }
 
 function updateTime() {
