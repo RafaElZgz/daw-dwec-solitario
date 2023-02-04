@@ -6,7 +6,7 @@
 
 Esta es una versión especial del juego del solitario. Es un proyecto estudiantil que no pretende ser un juego comercial.
 
-⚠️ Se puede probar en [alastuey.ovh](https://alastuey.ovh/)
+⚠️ Se puede probar en [alastuey.ovh](https://www.alastuey.ovh/)
 
 ### Posibles mejoras
 
