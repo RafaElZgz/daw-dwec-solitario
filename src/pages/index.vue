@@ -53,7 +53,7 @@ let pile_4 = { id: 4, array: [] } as Pile;
 */
 
 async function restart() {
-    // TODO : Hay que desarrollar este método
+    clearPile(initial_pile);
     clearPiles();
     start();
     isPlaying = false;
@@ -121,7 +121,7 @@ function clearPiles() {
 
 function showCards(pile: Pile) {
     pile.array.forEach((card) => {
-        const board = document.getElementById('board')!;
+        const board = document.getElementById(`pile_${pile.id}`)!;
         const card_element = document.createElement('img');
 
         card_element.draggable = false;
@@ -144,6 +144,12 @@ function showCards(pile: Pile) {
     });
 }
 
+function clearPile(pile: Pile) {
+    pile.array.forEach((card) => {
+        document.getElementById(`card-${card.id}`)!.remove();
+    });
+}
+
 // Card functions
 
 async function makeDraggable(card: Card) {
@@ -156,9 +162,6 @@ async function makeDraggable(card: Card) {
 
 function dragStart(event: DragEvent, card: Card) {
     event.dataTransfer!.setData('cardID', card.id.toString());
-
-    console.log(card);
-
     if (!isPlaying) {
         isPlaying = true;
     }
@@ -214,9 +217,9 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
             initial_pile.array = await shuffleCards(leftover_pile.array);
             leftover_pile.array = [];
         }
+        showCards(initial_pile);
         await alignCards(initial_pile.array);
     }
-
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 }
 
@@ -253,8 +256,6 @@ async function start() {
 
     await alignCards(initial_pile.array);
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
-
-    console.log(initial_pile.array);
 }
 
 onMounted(() => {
@@ -384,11 +385,11 @@ onMounted(() => {
                     </div>
                 </div>
                 <!-- Restart Button -->
-                <div class="flex border border-gray-400 buttons_box">
+                <div
+                    class="flex border border-gray-400 select-none buttons_box">
                     <button
                         data-modal-target="restart_modal"
                         data-modal-toggle="restart_modal"
-                        id="restart_button"
                         type="button"
                         class="px-3 py-2 m-auto text-white border rounded-lg border-primary-700 bg-primary-600 hover:bg-primary-500 hover:shadow-lg">
                         Reiniciar
@@ -398,7 +399,7 @@ onMounted(() => {
                 <div
                     class="flex bg-gradient-to-r from-green-600 via-green-500 to-green-600 main_pile_box">
                     <div
-                        id="board"
+                        id="pile_6"
                         class="relative flex w-full h-full m-4"></div>
                 </div>
             </div>
@@ -433,9 +434,9 @@ onMounted(() => {
                             ¿Seguro que quieres volver a iniciar la partida?
                         </h3>
                         <button
-                            @click="restart()"
                             data-modal-hide="restart_modal"
                             type="button"
+                            @click="restart()"
                             class="text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mx-auto">
                             Sí
                         </button>
