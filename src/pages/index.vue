@@ -40,7 +40,11 @@ let played_time_string = ref('00:00:00');
 
 var isPlaying = false;
 
-let initial_pile = { id: 6, array: [] } as Pile;
+let initial_pile = {
+    id: 6,
+    array: await shuffleCards(generateCards()),
+} as Pile;
+
 let leftover_pile = { id: 5, array: [] } as Pile;
 
 let pile_1 = { id: 1, array: [] } as Pile;
@@ -52,9 +56,16 @@ let pile_4 = { id: 4, array: [] } as Pile;
     Main functions
 */
 
-function restart() {
+async function restart() {
     // TODO : Hay que desarrollar este método
-    window.location.reload();
+    clearPiles();
+    initial_pile.array = await shuffleCards(generateCards());
+    isPlaying = false;
+    amount_movements = 0;
+    played_time = 0;
+    played_time_string.value = '00:00:00';
+    await alignCards(initial_pile.array);
+    await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 }
 
 function endGame() {
@@ -97,7 +108,7 @@ function generateCards(): Card[] {
     return pile;
 }
 
-function shuffleCards(pile: Card[]): Card[] {
+async function shuffleCards(pile: Card[]): Promise<Card[]> {
     let result_pile = pile.sort((a, b) => 0.5 - Math.random()) as Card[];
     result_pile.forEach((card, index) => {
         card.pile_position = index;
@@ -116,7 +127,7 @@ function clearPiles() {
 
 // Card functions
 
-function makeDraggable(card: Card) {
+async function makeDraggable(card: Card) {
     const card_element = document.getElementById(`card-${card.id}`)!;
     card_element.draggable = true;
     card_element.classList.add('cursor-grab');
@@ -145,8 +156,6 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
     initial_pile.array.splice(card!.pile_position, 1);
 
     card!.current_pile = new_pile_id;
-
-    await sleep(200);
 
     switch (new_pile_id) {
         case 1:
@@ -180,13 +189,14 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
             endGame();
             return;
         } else {
-            initial_pile.array = shuffleCards(leftover_pile.array);
+            leftover_pile.array = await shuffleCards(leftover_pile.array);
+            initial_pile.array = leftover_pile.array;
             leftover_pile.array = [];
-            alignCards(initial_pile.array);
+            await alignCards(initial_pile.array);
         }
     }
 
-    makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
+    await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 }
 
 // Visual functions
@@ -213,10 +223,6 @@ function updateTime() {
 /*
     Events
 */
-
-onBeforeMount(() => {
-    initial_pile.array = shuffleCards(generateCards());
-});
 
 onMounted(() => {
     initModals();
