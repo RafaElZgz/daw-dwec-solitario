@@ -30,7 +30,7 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const cards_per_suite = 2;
+const cards_per_suite = 12;
 const amount_cards = cards_per_suite * suits.length;
 
 // Valid configuration check
@@ -51,6 +51,9 @@ let pile_1 = { id: 1, array: [] } as Pile;
 let pile_2 = { id: 2, array: [] } as Pile;
 let pile_3 = { id: 3, array: [] } as Pile;
 let pile_4 = { id: 4, array: [] } as Pile;
+
+let current_playing_card: Card =
+    initial_pile.array[initial_pile.array.length - 1];
 
 let game_status_text = ref('Juego no iniciado');
 
@@ -192,16 +195,60 @@ async function makeDraggable(card: Card) {
 
 function dragStart(event: DragEvent, card: Card) {
     event.dataTransfer!.setData('cardID', card.id.toString());
+
     if (!isPlaying) {
         isPlaying = true;
         game_status_text.value = 'Partida en curso';
     }
+
+    current_playing_card = card;
 }
 
 function dragOver(event: DragEvent, pile: Pile) {
-    event.preventDefault();
+    // TODO : Comprobar si la carta se puede mover al mazo
 
-    // TODO : Comprobar si la carta se puede mover a la pila
+    const current_color =
+        current_playing_card.suit == 'oval' ||
+        current_playing_card.suit == 'square'
+            ? 'red'
+            : 'white';
+
+    let last_color = 'not_defined';
+
+    if (pile.array.length >= cards_per_suite) {
+        // El mazo esta lleno, no se puede mover la carta aquí
+        return;
+    }
+
+    if (pile.array.length < 1) {
+        // Solo se puede mover la carta de mayor valor a un mazo vacío
+        if (current_playing_card.value != cards_per_suite) {
+            return;
+        }
+    } else {
+        last_color =
+            pile.array[pile.array.length - 1].suit == 'oval' ||
+            pile.array[pile.array.length - 1].suit == 'square'
+                ? 'red'
+                : 'white';
+
+        if (
+            pile.array[pile.array.length - 1].value - 1 !=
+            current_playing_card.value
+        ) {
+            // La carta no se puede mover a este mazo porque la carta superior es de mayor valor
+            return;
+        }
+    }
+
+    if (last_color != 'not_defined') {
+        if (current_color === last_color) {
+            // La carta no se puede mover a este mazo porque la carta superior es del mismo color
+            return;
+        }
+    }
+
+    event.preventDefault();
 }
 
 async function onDrop(event: DragEvent, new_pile_id: number) {
@@ -294,7 +341,7 @@ onMounted(() => {
     setInterval(() => updateTime(), 1000);
     if (window.screen.availWidth < 800) {
         alert(
-            'El juego no está optimizado para pantallas pequeñas\n\nPor favor, juega en un dispositivo con una pantalla más grande.'
+            'El juego no está optimizado para pantallas pequeñas.\n\nPor favor, juega en un dispositivo con una pantalla más grande.'
         );
     }
     start();
@@ -421,9 +468,11 @@ onMounted(() => {
         <footer class="py-4 mx-auto">
             <p class="text-md">
                 Powered by
-                <span class="font-semibold text-primary-600">
+                <NuxtLink
+                    class="font-semibold text-primary-600"
+                    to="https://www.rab-devs.com/rafa">
                     RAB Developments
-                </span>
+                </NuxtLink>
             </p>
         </footer>
         <!-- Restart Modal -->
