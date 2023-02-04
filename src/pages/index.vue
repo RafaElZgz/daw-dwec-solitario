@@ -257,7 +257,7 @@ onMounted(() => {
                             class="absolute w-24 h-40 rounded-lg" />
                     </div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 border-white rounded-full bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_1.array.length }}</span>
                     </div>
                 </div>
@@ -275,7 +275,7 @@ onMounted(() => {
                             class="absolute w-24 h-40 rounded-lg" />
                     </div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 border-white rounded-full bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_2.array.length }}</span>
                     </div>
                 </div>
@@ -293,7 +293,7 @@ onMounted(() => {
                             class="absolute w-24 h-40 rounded-lg" />
                     </div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 border-white rounded-full bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_3.array.length }}</span>
                     </div>
                 </div>
@@ -311,7 +311,7 @@ onMounted(() => {
                             class="absolute w-24 h-40 rounded-lg" />
                     </div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 border-white rounded-full bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_4.array.length }}</span>
                     </div>
                 </div>
