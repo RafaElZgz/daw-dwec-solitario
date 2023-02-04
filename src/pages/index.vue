@@ -26,7 +26,7 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const cards_per_suite = 4;
+const cards_per_suite = 1;
 const amount_cards = cards_per_suite * suits.length;
 
 // Valid configuration check
@@ -173,7 +173,7 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
 
     amount_movements += 1;
 
-    // TODO : Agregar una comprobación de cuantas cartas que quedan por jugar y cuantas cartas hay en la pila de descartes
+    // TODO : Arreglar la comprobación de cuantas cartas que quedan por jugar y cuantas cartas hay en la pila de descartes
 
     if (initial_pile.array.length == 0) {
         if (leftover_pile.array.length == 0) {
@@ -267,7 +267,7 @@ onMounted(() => {
                             class="absolute w-24 h-40 rounded-lg" />
                     </div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full border-primary-100 bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_1.array.length }}</span>
                     </div>
                 </div>
@@ -285,7 +285,7 @@ onMounted(() => {
                             class="absolute w-24 h-40 rounded-lg" />
                     </div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full border-primary-100 bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_2.array.length }}</span>
                     </div>
                 </div>
@@ -303,7 +303,7 @@ onMounted(() => {
                             class="absolute w-24 h-40 rounded-lg" />
                     </div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full border-primary-100 bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_3.array.length }}</span>
                     </div>
                 </div>
@@ -321,7 +321,7 @@ onMounted(() => {
                             class="absolute w-24 h-40 rounded-lg" />
                     </div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full border-primary-100 bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_4.array.length }}</span>
                     </div>
                 </div>
@@ -340,7 +340,7 @@ onMounted(() => {
                             class="absolute w-24 h-40 rounded-lg" />
                     </div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white bg-blue-500 border-2 border-blue-200 rounded-full top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white bg-blue-500 border-2 border-blue-200 rounded-full select-none top-2 right-2 text-">
                         <span>{{ leftover_pile.array.length }}</span>
                     </div>
                 </div>
