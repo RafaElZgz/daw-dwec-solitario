@@ -115,13 +115,16 @@ async function shuffleCards(pile: Card[]): Promise<Card[]> {
 function clearPiles() {
     clearPile(initial_pile);
     initial_pile.array = [];
-    const piles = [pile_1, pile_2, pile_3, pile_4, leftover_pile];
-    piles.forEach((pile) => {
-        if (pile.array.length > 0) {
-            pile.array = [];
-            clearPile(pile);
-        }
-    });
+    clearPile(leftover_pile);
+    leftover_pile.array = [];
+    clearPile(pile_1);
+    pile_1.array = [];
+    clearPile(pile_2);
+    pile_2.array = [];
+    clearPile(pile_3);
+    pile_3.array = [];
+    clearPile(pile_4);
+    pile_4.array = [];
 }
 
 function showCards(pile: Pile) {
@@ -152,6 +155,16 @@ function showCards(pile: Pile) {
 function addCardToPile(card: Card, pile: Pile) {
     card.pile_position = pile.array.length - 1;
     pile.array.push(card);
+
+    const pile_box = document.getElementById(`pile_${pile.id}`)!;
+    const card_element = document.createElement('img');
+
+    card_element.draggable = false;
+    card_element.id = `card-${card.id}`;
+    card_element.src = `/cards/${card.suit}/${card.value}.png`;
+    card_element.classList.add('absolute', 'w-24', 'h-40', 'rounded-lg');
+
+    pile_box.appendChild(card_element);
 }
 
 function clearPile(pile: Pile) {
@@ -217,6 +230,7 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
             endGame();
             return;
         }
+        clearPile(leftover_pile);
         initial_pile.array = await shuffleCards(leftover_pile.array);
         leftover_pile.array = [];
         showCards(initial_pile);
@@ -301,13 +315,8 @@ onMounted(() => {
                     @dragenter.prevent
                     class="relative flex bg-green-600 rounded-lg pile_1_box">
                     <div
-                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl">
-                        <img
-                            v-for="card in pile_1.array"
-                            draggable="false"
-                            :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg" />
-                    </div>
+                        id="pile_1"
+                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_1.array.length }}</span>
@@ -319,13 +328,8 @@ onMounted(() => {
                     @dragenter.prevent
                     class="relative flex bg-green-600 rounded-lg pile_2_box">
                     <div
-                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl">
-                        <img
-                            v-for="card in pile_2.array"
-                            draggable="false"
-                            :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg" />
-                    </div>
+                        id="pile_2"
+                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_2.array.length }}</span>
@@ -337,13 +341,8 @@ onMounted(() => {
                     @dragenter.prevent
                     class="relative flex bg-green-600 rounded-lg pile_3_box">
                     <div
-                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl">
-                        <img
-                            v-for="card in pile_3.array"
-                            draggable="false"
-                            :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg" />
-                    </div>
+                        id="pile_3"
+                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_3.array.length }}</span>
@@ -355,13 +354,8 @@ onMounted(() => {
                     @dragenter.prevent
                     class="relative flex bg-green-600 rounded-lg pile_4_box">
                     <div
-                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl">
-                        <img
-                            v-for="card in pile_4.array"
-                            draggable="false"
-                            :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg" />
-                    </div>
+                        id="pile_4"
+                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
                         <span>{{ pile_4.array.length }}</span>
@@ -374,13 +368,8 @@ onMounted(() => {
                     @dragenter.prevent
                     class="relative flex bg-blue-400 leftover_cards_box">
                     <div
-                        class="w-24 h-40 m-auto rounded-lg shadow-2xl select-none">
-                        <img
-                            v-for="card in leftover_pile.array"
-                            draggable="false"
-                            :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg" />
-                    </div>
+                        id="pile_5"
+                        class="w-24 h-40 m-auto rounded-lg shadow-2xl select-none"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white bg-blue-500 border-2 border-blue-200 rounded-full select-none top-2 right-2 text-">
                         <span>{{ leftover_pile.array.length }}</span>
