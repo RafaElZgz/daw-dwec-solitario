@@ -292,7 +292,11 @@ async function start() {
 onMounted(() => {
     initModals();
     setInterval(() => updateTime(), 1000);
-
+    if (window.screen.availWidth < 800) {
+        alert(
+            'El juego no está optimizado para pantallas pequeñas\n\nPor favor, juega en un dispositivo con una pantalla más grande.'
+        );
+    }
     start();
 });
 </script>
@@ -426,7 +430,7 @@ onMounted(() => {
         <div
             id="restart_modal"
             tabindex="-1"
-            class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full bg-gray-400/50">
+            class="fixed top-0 left-0 right-0 z-50 hidden w-full h-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal bg-gray-400/50">
             <div class="relative w-full h-full max-w-md m-auto md:h-auto">
                 <div class="relative bg-white rounded-lg shadow">
                     <button
@@ -467,7 +471,7 @@ onMounted(() => {
             data-modal-backdrop="static"
             data-modal-closable="false"
             tabindex="-1"
-            class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full bg-gray-400/50">
+            class="fixed top-0 left-0 right-0 z-50 hidden w-full h-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal bg-gray-400/50">
             <div class="relative w-full h-full max-w-md m-auto md:h-auto">
                 <div class="relative bg-white rounded-lg shadow">
                     <button
