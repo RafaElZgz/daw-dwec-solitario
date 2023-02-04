@@ -158,22 +158,26 @@ function onDrop(event: DragEvent, new_pile_id: number) {
     setTimeout(() => makeDraggable(current_card_id), 1000);
 
     card!.current_pile = new_pile_id;
-    card!.pile_position = 0;
 
     switch (new_pile_id) {
         case 1:
+            card!.pile_position = pile_1.array.length - 1;
             pile_1.array.push(card!);
             break;
         case 2:
+            card!.pile_position = pile_2.array.length - 1;
             pile_2.array.push(card!);
             break;
         case 3:
+            card!.pile_position = pile_3.array.length - 1;
             pile_3.array.push(card!);
             break;
         case 4:
+            card!.pile_position = pile_4.array.length - 1;
             pile_4.array.push(card!);
             break;
         case 5:
+            card!.pile_position = leftover_pile.array.length - 1;
             leftover_pile.array.push(card!);
             break;
     }
