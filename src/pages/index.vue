@@ -240,52 +240,72 @@ onMounted(() => {
                     @drop="onDrop($event, pile_1.id)"
                     @dragover.prevent
                     @dragenter.prevent
-                    class="flex bg-green-600 rounded-lg pile_1_box">
-                    <div class="w-24 h-40 m-auto">
+                    class="relative flex bg-green-600 rounded-lg pile_1_box">
+                    <div
+                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl">
                         <img
                             v-for="card in pile_1.array"
                             draggable="false"
                             :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg select-none" />
+                            class="absolute w-24 h-40 rounded-lg" />
+                    </div>
+                    <div
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 border-white rounded-full bg-primary-500 top-2 right-2 text-">
+                        <span>{{ pile_1.array.length }}</span>
                     </div>
                 </div>
                 <div
                     @drop="onDrop($event, pile_2.id)"
                     @dragover.prevent
                     @dragenter.prevent
-                    class="flex bg-green-600 rounded-lg pile_2_box">
-                    <div class="w-24 h-40 m-auto">
+                    class="relative flex bg-green-600 rounded-lg pile_2_box">
+                    <div
+                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl">
                         <img
                             v-for="card in pile_2.array"
                             draggable="false"
                             :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg select-none" />
+                            class="absolute w-24 h-40 rounded-lg" />
+                    </div>
+                    <div
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 border-white rounded-full bg-primary-500 top-2 right-2 text-">
+                        <span>{{ pile_2.array.length }}</span>
                     </div>
                 </div>
                 <div
                     @drop="onDrop($event, pile_3.id)"
                     @dragover.prevent
                     @dragenter.prevent
-                    class="flex bg-green-600 rounded-lg pile_3_box">
-                    <div class="w-24 h-40 m-auto">
+                    class="relative flex bg-green-600 rounded-lg pile_3_box">
+                    <div
+                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl">
                         <img
                             v-for="card in pile_3.array"
                             draggable="false"
                             :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg select-none" />
+                            class="absolute w-24 h-40 rounded-lg" />
+                    </div>
+                    <div
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 border-white rounded-full bg-primary-500 top-2 right-2 text-">
+                        <span>{{ pile_3.array.length }}</span>
                     </div>
                 </div>
                 <div
                     @drop="onDrop($event, pile_4.id)"
                     @dragover.prevent
                     @dragenter.prevent
-                    class="flex bg-green-600 rounded-lg pile_4_box">
-                    <div class="w-24 h-40 m-auto">
+                    class="relative flex bg-green-600 rounded-lg pile_4_box">
+                    <div
+                        class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl">
                         <img
                             v-for="card in pile_4.array"
                             draggable="false"
                             :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg select-none" />
+                            class="absolute w-24 h-40 rounded-lg" />
+                    </div>
+                    <div
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 border-white rounded-full bg-primary-500 top-2 right-2 text-">
+                        <span>{{ pile_4.array.length }}</span>
                     </div>
                 </div>
                 <!-- Leftover Cards -->
@@ -293,13 +313,14 @@ onMounted(() => {
                     @drop="onDrop($event, leftover_pile.id)"
                     @dragover.prevent
                     @dragenter.prevent
-                    class="flex bg-blue-400 leftover_cards_box">
-                    <div class="w-24 h-40 m-auto">
+                    class="relative flex bg-blue-400 leftover_cards_box">
+                    <div
+                        class="w-24 h-40 m-auto rounded-lg shadow-2xl select-none">
                         <img
                             v-for="card in leftover_pile.array"
                             draggable="false"
                             :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 rounded-lg select-none" />
+                            class="absolute w-24 h-40 rounded-lg" />
                     </div>
                 </div>
                 <!-- Restart Button -->
