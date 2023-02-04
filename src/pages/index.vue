@@ -30,7 +30,7 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const cards_per_suite = 1;
+const cards_per_suite = 2;
 const amount_cards = cards_per_suite * suits.length;
 
 // Valid configuration check
@@ -52,6 +52,8 @@ let pile_2 = { id: 2, array: [] } as Pile;
 let pile_3 = { id: 3, array: [] } as Pile;
 let pile_4 = { id: 4, array: [] } as Pile;
 
+let game_status_text = ref('Juego no iniciado');
+
 /*
     Main functions
 */
@@ -69,6 +71,7 @@ function endGame() {
     // TODO : Hay que desarrollar este método
     setTimeout(() => {
         isPlaying = false;
+        game_status_text.value = 'Partida finalizada';
         document.getElementById('win_modal_button')!.click();
     }, 1000);
 }
@@ -191,6 +194,7 @@ function dragStart(event: DragEvent, card: Card) {
     event.dataTransfer!.setData('cardID', card.id.toString());
     if (!isPlaying) {
         isPlaying = true;
+        game_status_text.value = 'Partida en curso';
     }
 }
 
@@ -234,11 +238,18 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
             endGame();
             return;
         }
+
         clearPile(leftover_pile);
         initial_pile.array = await shuffleCards(leftover_pile.array);
         leftover_pile.array = [];
+
         showCards(initial_pile);
         await alignCards(initial_pile.array);
+
+        game_status_text.value = 'Mezclando las cartas ...';
+        setTimeout(() => {
+            game_status_text.value = 'Partida en curso';
+        }, 2000);
     }
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 }
@@ -322,7 +333,7 @@ onMounted(() => {
                         id="pile_1"
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
                         <span>{{ pile_1.array.length }}</span>
                     </div>
                 </div>
@@ -335,7 +346,7 @@ onMounted(() => {
                         id="pile_2"
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
                         <span>{{ pile_2.array.length }}</span>
                     </div>
                 </div>
@@ -348,7 +359,7 @@ onMounted(() => {
                         id="pile_3"
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
                         <span>{{ pile_3.array.length }}</span>
                     </div>
                 </div>
@@ -361,7 +372,7 @@ onMounted(() => {
                         id="pile_4"
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
                         <span>{{ pile_4.array.length }}</span>
                     </div>
                 </div>
@@ -375,7 +386,7 @@ onMounted(() => {
                         id="pile_5"
                         class="w-24 h-40 m-auto rounded-lg shadow-2xl select-none"></div>
                     <div
-                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white bg-blue-500 border-2 border-blue-200 rounded-full select-none top-2 right-2 text-">
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white bg-blue-500 border-2 border-blue-200 rounded-full select-none top-2 right-2">
                         <span>{{ leftover_pile.array.length }}</span>
                     </div>
                 </div>
@@ -393,9 +404,12 @@ onMounted(() => {
                 <!-- Main Pile -->
                 <div
                     class="flex bg-gradient-to-r from-green-600 via-green-500 to-green-600 main_pile_box">
-                    <div
-                        id="pile_6"
-                        class="relative flex w-full h-full m-4"></div>
+                    <div id="pile_6" class="relative flex w-full h-full m-4">
+                        <div
+                            class="absolute text-sm font-semibold text-white select-none bottom-8 right-2">
+                            <span>{{ game_status_text }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
