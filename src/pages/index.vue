@@ -53,7 +53,6 @@ let pile_4 = { id: 4, array: [] } as Pile;
 */
 
 async function restart() {
-    clearPile(initial_pile);
     clearPiles();
     start();
     isPlaying = false;
@@ -64,7 +63,10 @@ async function restart() {
 
 function endGame() {
     // TODO : Hay que desarrollar este método
-    restart();
+    setTimeout(() => {
+        isPlaying = false;
+        alert('¡Has ganado!');
+    }, 1000);
 }
 
 /*
@@ -111,12 +113,15 @@ async function shuffleCards(pile: Card[]): Promise<Card[]> {
 }
 
 function clearPiles() {
-    pile_1.array = [];
-    pile_2.array = [];
-    pile_3.array = [];
-    pile_4.array = [];
-    leftover_pile.array = [];
+    clearPile(initial_pile);
     initial_pile.array = [];
+    const piles = [pile_1, pile_2, pile_3, pile_4, leftover_pile];
+    piles.forEach((pile) => {
+        if (pile.array.length > 0) {
+            pile.array = [];
+            clearPile(pile);
+        }
+    });
 }
 
 function showCards(pile: Pile) {
