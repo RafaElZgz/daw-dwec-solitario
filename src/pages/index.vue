@@ -40,11 +40,7 @@ let played_time_string = ref('00:00:00');
 
 var isPlaying = false;
 
-let initial_pile = {
-    id: 6,
-    array: await shuffleCards(generateCards()),
-} as Pile;
-
+let initial_pile = { id: 6, array: [] } as Pile;
 let leftover_pile = { id: 5, array: [] } as Pile;
 
 let pile_1 = { id: 1, array: [] } as Pile;
@@ -59,13 +55,11 @@ let pile_4 = { id: 4, array: [] } as Pile;
 async function restart() {
     // TODO : Hay que desarrollar este método
     clearPiles();
-    initial_pile.array = await shuffleCards(generateCards());
+    start();
     isPlaying = false;
     amount_movements = 0;
     played_time = 0;
     played_time_string.value = '00:00:00';
-    await alignCards(initial_pile.array);
-    await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 }
 
 function endGame() {
@@ -125,6 +119,31 @@ function clearPiles() {
     initial_pile.array = [];
 }
 
+function showCards(pile: Pile) {
+    pile.array.forEach((card) => {
+        const board = document.getElementById('board')!;
+        const card_element = document.createElement('img');
+
+        card_element.draggable = false;
+        card_element.id = `card-${card.id}`;
+        card_element.src = `/cards/${card.suit}/${card.value}.png`;
+        card_element.classList.add(
+            'absolute',
+            'w-24',
+            'h-40',
+            'transform',
+            'rounded-lg',
+            'select-none'
+        );
+
+        card_element.addEventListener('dragstart', (event) => {
+            dragStart(event, card);
+        });
+
+        board.appendChild(card_element);
+    });
+}
+
 // Card functions
 
 async function makeDraggable(card: Card) {
@@ -137,6 +156,8 @@ async function makeDraggable(card: Card) {
 
 function dragStart(event: DragEvent, card: Card) {
     event.dataTransfer!.setData('cardID', card.id.toString());
+
+    console.log(card);
 
     if (!isPlaying) {
         isPlaying = true;
@@ -154,6 +175,7 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
     const card = initial_pile.array.find((card) => card.id == parseInt(cardID));
 
     initial_pile.array.splice(card!.pile_position, 1);
+    document.getElementById(`card-${card!.id}`)!.remove();
 
     card!.current_pile = new_pile_id;
 
@@ -202,7 +224,6 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
 
 async function alignCards(cards: Card[]) {
     for (const card of cards) {
-        console.log(card);
         const card_element = document.getElementById(`card-${card.id}`)!;
 
         card_element.style.top = `${card.pile_position * 3}px`;
@@ -225,11 +246,22 @@ function updateTime() {
     Events
 */
 
+async function start() {
+    initial_pile.array = await shuffleCards(generateCards());
+
+    showCards(initial_pile);
+
+    await alignCards(initial_pile.array);
+    await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
+
+    console.log(initial_pile.array);
+}
+
 onMounted(() => {
     initModals();
     setInterval(() => updateTime(), 1000);
-    alignCards(initial_pile.array);
-    makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
+
+    start();
 });
 </script>
 
@@ -365,15 +397,9 @@ onMounted(() => {
                 <!-- Main Pile -->
                 <div
                     class="flex bg-gradient-to-r from-green-600 via-green-500 to-green-600 main_pile_box">
-                    <div class="relative flex w-full h-full m-4">
-                        <img
-                            v-for="card in initial_pile.array"
-                            draggable="false"
-                            @dragstart="dragStart($event, card)"
-                            :id="`card-${card.id}`"
-                            :src="`/cards/${card.suit}/${card.value}.png`"
-                            class="absolute w-24 h-40 transform rounded-lg select-none" />
-                    </div>
+                    <div
+                        id="board"
+                        class="relative flex w-full h-full m-4"></div>
                 </div>
             </div>
         </main>
