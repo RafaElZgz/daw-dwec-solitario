@@ -189,11 +189,10 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
             endGame();
             return;
         } else {
-            leftover_pile.array = await shuffleCards(leftover_pile.array);
-            initial_pile.array = leftover_pile.array;
+            initial_pile.array = await shuffleCards(leftover_pile.array);
             leftover_pile.array = [];
-            await alignCards(initial_pile.array);
         }
+        await alignCards(initial_pile.array);
     }
 
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
@@ -203,10 +202,12 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
 
 async function alignCards(cards: Card[]) {
     for (const card of cards) {
+        console.log(card);
         const card_element = document.getElementById(`card-${card.id}`)!;
 
         card_element.style.top = `${card.pile_position * 3}px`;
         card_element.style.left = `${card.pile_position * 6}px`;
+        card_element.style.zIndex = `${card.pile_position}`;
 
         await sleep(20);
     }
