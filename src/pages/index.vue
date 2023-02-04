@@ -26,7 +26,7 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const amount_cards = 8;
+const amount_cards = 4;
 const cards_per_suite = amount_cards / suits.length;
 
 // Valid configuration check
@@ -139,10 +139,17 @@ function onDrop(event: DragEvent, new_pile_id: number) {
 
     initial_pile.array.splice(card!.pile_position, 1);
 
-    //TODO: Comprobar si la carta se puede mover a la pila
+    // TODO: Comprobar si la carta se puede mover a la pila
 
-    if (card!.pile_position - 1 < 0) {
+    // TODO : Mejorar la comprobación de las cartas que quedan por jugar y la pila de descartes
+    if (card!.pile_position - 1 < 0 && leftover_pile.array.length === 0) {
         endGame();
+        return;
+    } else if (card!.pile_position - 1 < 0 && leftover_pile.array.length > 0) {
+        initial_pile.array = shuffleCards(leftover_pile.array);
+        leftover_pile.array = [];
+        current_card_id = initial_pile.array[initial_pile.array.length - 1].id;
+        setTimeout(() => makeDraggable(current_card_id), 1000);
         return;
     }
 
@@ -321,6 +328,10 @@ onMounted(() => {
                             draggable="false"
                             :src="`/cards/${card.suit}/${card.value}.png`"
                             class="absolute w-24 h-40 rounded-lg" />
+                    </div>
+                    <div
+                        class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white bg-blue-500 border-2 border-blue-200 rounded-full top-2 right-2 text-">
+                        <span>{{ leftover_pile.array.length }}</span>
                     </div>
                 </div>
                 <!-- Restart Button -->
