@@ -14,4 +14,7 @@ export default defineNuxtConfig({
     },
     modules: ['@nuxtjs/tailwindcss'],
     srcDir: 'src',
+    tailwindcss: {
+        viewer: false,
+    },
 });

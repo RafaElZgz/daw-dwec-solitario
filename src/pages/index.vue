@@ -3,6 +3,7 @@ import { initModals } from 'flowbite';
 import {
     ExclamationCircleIcon,
     FaceSmileIcon,
+    InformationCircleIcon,
     XMarkIcon,
 } from '@heroicons/vue/24/outline';
 
@@ -396,6 +397,13 @@ onMounted(() => {
                         {{ amount_movements }}
                     </span>
                 </h3>
+                <button
+                    data-modal-target="instructions_modal"
+                    data-modal-toggle="instructions_modal"
+                    type="button"
+                    class="p-4 mx-4 border border-gray-400 text-primary-600 hover:text-primary-900">
+                    ¿Cómo se juega?
+                </button>
             </div>
         </header>
         <!-- Content -->
@@ -599,6 +607,57 @@ onMounted(() => {
                                 </li>
                             </ul>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Instructions Modal -->
+        <div
+            id="instructions_modal"
+            tabindex="-1"
+            class="fixed top-0 left-0 right-0 z-50 hidden w-full h-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal bg-gray-400/50">
+            <div class="relative w-full h-full m-auto max-w-fit md:h-auto">
+                <div class="relative p-8 bg-white rounded-lg shadow">
+                    <button
+                        type="button"
+                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                        data-modal-hide="instructions_modal">
+                        <XMarkIcon class="w-5 h-5" />
+                        <span class="sr-only">Instrucciones del juego</span>
+                    </button>
+                    <div class="p-6 text-center">
+                        <InformationCircleIcon
+                            class="mx-auto mb-4 text-blue-400 w-14 h-14" />
+                        <h3 class="mb-5 text-lg font-normal text-gray-500">
+                            Estas son las instrucciones del juego
+                        </h3>
+                        <ul class="text-left text-gray-400 list-decimal">
+                            <li>
+                                El objetivo es repartir las 48 cartas en 4 mazos
+                                distintos, de 12 cartas cada uno.
+                            </li>
+                            <li>
+                                Hay que colocar las cartas en orden de mayor a
+                                menor valor, comenzando con el número 12.
+                            </li>
+                            <li>
+                                Una carta no puede colocarse encima de otra de
+                                su mismo color.
+                            </li>
+                            <li>
+                                Utiliza el mazo auxiliar (de color azul) para
+                                almacenar las cartas que no puedas colocar.
+                            </li>
+                            <li>
+                                Cuando ya no haya más cartas por sacar, las
+                                cartas del mazo auxiliar se mezclaran y volverán
+                                a estar disponibles.
+                            </li>
+                            <li>
+                                El juego termina cuando el mazo auxiliar esté
+                                vacío y no haya más cartas por sacar.
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
