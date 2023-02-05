@@ -382,7 +382,7 @@ onMounted(() => {
         <header class="flex flex-col pt-6 mx-auto">
             <div class="flex flex-row py-4 mx-auto text-center">
                 <h1 class="text-4xl">Solitario</h1>
-                <img class="w-auto h-8 mx-4" src="/logo.png" />
+                <img class="w-auto h-8 mx-4" alt="Logotipo" src="/logo.png" />
             </div>
             <div class="flex flex-row">
                 <h3 class="p-4 mx-4 border border-gray-400">
