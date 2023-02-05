@@ -210,9 +210,12 @@ async function makeDraggable(card: Card) {
     card_element.classList.add('cursor-grab');
 }
 
+// Touch functions
+
 // Drag and drop functions
 
 function dragStart(event: DragEvent, card: Card) {
+    event.dataTransfer!.effectAllowed = 'move';
     event.dataTransfer!.setData('cardID', card.id.toString());
 
     if (!isPlaying) {
@@ -388,10 +391,14 @@ onMounted(() => {
 <template>
     <div class="flex flex-col h-screen">
         <!-- Header -->
-        <header class="flex flex-col pt-6 mx-auto">
+        <header class="flex flex-col pt-6 mx-auto select-none">
             <div class="flex flex-row py-4 mx-auto text-center">
                 <h1 class="text-4xl">Solitario</h1>
-                <img class="w-auto h-8 mx-4" alt="Logotipo" src="/logo.png" />
+                <img
+                    class="w-auto h-8 mx-4"
+                    alt="Logotipo"
+                    src="/logo.png"
+                    draggable="false" />
             </div>
             <div class="flex flex-row">
                 <h3 class="p-4 mx-4 border border-gray-400">
