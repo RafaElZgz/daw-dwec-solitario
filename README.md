@@ -13,6 +13,8 @@ Esta es una versión especial del juego del solitario. Es un proyecto estudianti
 -   [x] Guardar el resultado de las partidas en local
 -   [ ] Guardar el resultado de las partidas usando una API
 -   [ ] Integrar un sistema de logueo
+-   [ ] Hacer el juego compatible con pantallas táctiles
+-   [ ] Hacer el juego mobile friendly
 
 ### Requisitos
 
