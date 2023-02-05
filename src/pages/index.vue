@@ -403,7 +403,9 @@ onMounted(() => {
     initModals();
     setInterval(() => updateTime(), 1000);
 
-    if (window.screen.availWidth < 800) {
+    var isTouchScreen = 'ontouchstart' in window;
+
+    if (window.screen.availWidth < 800 || isTouchScreen) {
         navigateTo('mobile');
     }
 
