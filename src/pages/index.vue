@@ -31,7 +31,7 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const cards_per_suite = 1;
+const cards_per_suite = 12;
 const amount_cards = cards_per_suite * suits.length;
 
 // Valid configuration check
@@ -402,11 +402,11 @@ function updateTime() {
 onMounted(() => {
     initModals();
     setInterval(() => updateTime(), 1000);
+
     if (window.screen.availWidth < 800) {
-        alert(
-            'El juego no está optimizado para pantallas pequeñas.\n\nPor favor, juega en un dispositivo con una pantalla más grande.'
-        );
+        navigateTo('mobile');
     }
+
     start();
 
     best_time = parseInt(localStorage.getItem('best_time') || '-1');
