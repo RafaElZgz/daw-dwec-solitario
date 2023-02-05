@@ -10,7 +10,7 @@ Esta es una versión especial del juego del solitario. Es un proyecto estudianti
 
 ### Posibles mejoras
 
--   [ ] Guardar el resultado de las partidas en local
+-   [x] Guardar el resultado de las partidas en local
 -   [ ] Guardar el resultado de las partidas usando una API
 -   [ ] Integrar un sistema de logueo
 
