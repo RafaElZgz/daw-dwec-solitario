@@ -58,9 +58,27 @@ let current_playing_card: Card =
 
 let game_status_text = ref('Juego no iniciado');
 
+const instructions = [
+    'El objetivo es repartir las 48 cartas en 4 mazos distintos, de 12 cartas cada uno.',
+    'Hay que colocar las cartas en orden de mayor a menor valor, comenzando con el número 12.',
+    'Una carta no puede colocarse encima de otra de su mismo color.',
+    'Utiliza el mazo auxiliar (de color azul) para almacenar las cartas que no puedas colocar.',
+    'Cuando ya no haya más cartas por sacar, las cartas del mazo auxiliar se mezclaran y volverán a estar disponibles.',
+    'El juego termina cuando el mazo auxiliar esté vacío y no haya más cartas por sacar.',
+];
+
 /*
     Main functions
 */
+
+async function start() {
+    initial_pile.array = await shuffleCards(generateCards());
+
+    showCards(initial_pile);
+
+    await alignCards(initial_pile.array);
+    await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
+}
 
 async function restart() {
     clearPiles();
@@ -355,15 +373,6 @@ function updateTime() {
     Events
 */
 
-async function start() {
-    initial_pile.array = await shuffleCards(generateCards());
-
-    showCards(initial_pile);
-
-    await alignCards(initial_pile.array);
-    await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
-}
-
 onMounted(() => {
     initModals();
     setInterval(() => updateTime(), 1000);
@@ -632,31 +641,7 @@ onMounted(() => {
                             Estas son las instrucciones del juego
                         </h3>
                         <ul class="text-left text-gray-400 list-decimal">
-                            <li>
-                                El objetivo es repartir las 48 cartas en 4 mazos
-                                distintos, de 12 cartas cada uno.
-                            </li>
-                            <li>
-                                Hay que colocar las cartas en orden de mayor a
-                                menor valor, comenzando con el número 12.
-                            </li>
-                            <li>
-                                Una carta no puede colocarse encima de otra de
-                                su mismo color.
-                            </li>
-                            <li>
-                                Utiliza el mazo auxiliar (de color azul) para
-                                almacenar las cartas que no puedas colocar.
-                            </li>
-                            <li>
-                                Cuando ya no haya más cartas por sacar, las
-                                cartas del mazo auxiliar se mezclaran y volverán
-                                a estar disponibles.
-                            </li>
-                            <li>
-                                El juego termina cuando el mazo auxiliar esté
-                                vacío y no haya más cartas por sacar.
-                            </li>
+                            <li v-for="text in instructions">{{ text }}</li>
                         </ul>
                     </div>
                 </div>
