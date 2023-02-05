@@ -205,7 +205,7 @@ function dragStart(event: DragEvent, card: Card) {
 }
 
 function dragOver(event: DragEvent, pile: Pile) {
-    // TODO : Comprobar si la carta se puede mover al mazo
+    var isValid = true;
 
     const current_color =
         current_playing_card.suit == 'oval' ||
@@ -217,13 +217,13 @@ function dragOver(event: DragEvent, pile: Pile) {
 
     if (pile.array.length >= cards_per_suite) {
         // El mazo esta lleno, no se puede mover la carta aquí
-        return;
+        isValid = false;
     }
 
     if (pile.array.length < 1) {
         // Solo se puede mover la carta de mayor valor a un mazo vacío
         if (current_playing_card.value != cards_per_suite) {
-            return;
+            isValid = false;
         }
     } else {
         last_color =
@@ -237,18 +237,36 @@ function dragOver(event: DragEvent, pile: Pile) {
             current_playing_card.value
         ) {
             // La carta no se puede mover a este mazo porque la carta superior es de mayor valor
-            return;
+            isValid = false;
         }
     }
 
     if (last_color != 'not_defined') {
         if (current_color === last_color) {
             // La carta no se puede mover a este mazo porque la carta superior es del mismo color
-            return;
+            isValid = false;
         }
     }
 
+    const pile_element = document.getElementById(`pile_${pile.id}_box`)!;
+
+    if (isValid) {
+        pile_element.classList.remove('bg-green-600');
+        pile_element.classList.add('bg-green-400');
+    } else {
+        pile_element.classList.remove('bg-green-600');
+        pile_element.classList.add('bg-red-600');
+        return;
+    }
+
     event.preventDefault();
+}
+
+function dragLeave(event: DragEvent, pile: Pile) {
+    const pile_element = document.getElementById(`pile_${pile.id}_box`)!;
+    pile_element.classList.remove('bg-green-400');
+    pile_element.classList.remove('bg-red-600');
+    pile_element.classList.add('bg-green-600');
 }
 
 async function onDrop(event: DragEvent, new_pile_id: number) {
@@ -259,6 +277,15 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
     document.getElementById(`card-${card!.id}`)!.remove();
 
     card!.current_pile = new_pile_id;
+
+    if (new_pile_id != 5) {
+        const pile_element = document.getElementById(
+            `pile_${new_pile_id}_box`
+        )!;
+        pile_element.classList.remove('bg-green-400');
+        pile_element.classList.remove('bg-red-600');
+        pile_element.classList.add('bg-green-600');
+    }
 
     switch (new_pile_id) {
         case 1:
@@ -379,9 +406,11 @@ onMounted(() => {
                     @drop="onDrop($event, pile_1.id)"
                     @dragover="dragOver($event, pile_1)"
                     @dragenter.prevent
+                    @dragleave="dragLeave($event, pile_1)"
+                    :id="`pile_${pile_1.id}_box`"
                     class="relative flex bg-green-600 rounded-lg pile_1_box">
                     <div
-                        id="pile_1"
+                        :id="`pile_${pile_1.id}`"
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
@@ -392,9 +421,11 @@ onMounted(() => {
                     @drop="onDrop($event, pile_2.id)"
                     @dragover="dragOver($event, pile_2)"
                     @dragenter.prevent
+                    @dragleave="dragLeave($event, pile_2)"
+                    :id="`pile_${pile_2.id}_box`"
                     class="relative flex bg-green-600 rounded-lg pile_2_box">
                     <div
-                        id="pile_2"
+                        :id="`pile_${pile_2.id}`"
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
@@ -405,9 +436,11 @@ onMounted(() => {
                     @drop="onDrop($event, pile_3.id)"
                     @dragover="dragOver($event, pile_3)"
                     @dragenter.prevent
+                    @dragleave="dragLeave($event, pile_3)"
+                    :id="`pile_${pile_3.id}_box`"
                     class="relative flex bg-green-600 rounded-lg pile_3_box">
                     <div
-                        id="pile_3"
+                        :id="`pile_${pile_3.id}`"
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
@@ -418,9 +451,11 @@ onMounted(() => {
                     @drop="onDrop($event, pile_4.id)"
                     @dragover="dragOver($event, pile_4)"
                     @dragenter.prevent
+                    @dragleave="dragLeave($event, pile_4)"
+                    :id="`pile_${pile_4.id}_box`"
                     class="relative flex bg-green-600 rounded-lg pile_4_box">
                     <div
-                        id="pile_4"
+                        :id="`pile_${pile_4.id}`"
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
@@ -434,7 +469,7 @@ onMounted(() => {
                     @dragenter.prevent
                     class="relative flex bg-blue-400 leftover_cards_box">
                     <div
-                        id="pile_5"
+                        :id="`pile_${leftover_pile.id}`"
                         class="w-24 h-40 m-auto rounded-lg shadow-2xl select-none"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white bg-blue-500 border-2 border-blue-200 rounded-full select-none top-2 right-2">
