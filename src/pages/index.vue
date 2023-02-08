@@ -31,7 +31,7 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const cards_per_suite = 12;
+const cards_per_suite = 2;
 const amount_cards = cards_per_suite * suits.length;
 
 // Valid configuration check
@@ -158,9 +158,11 @@ function generateCards(): Card[] {
 
 async function shuffleCards(pile: Card[]): Promise<Card[]> {
     let result_pile = pile.sort((a, b) => 0.5 - Math.random()) as Card[];
+
     result_pile.forEach((card, index) => {
         card.pile_position = index;
     });
+
     return result_pile;
 }
 
@@ -204,9 +206,8 @@ function showCards(pile: Pile) {
     });
 }
 
-function addCardToPile(card: Card, pile: Pile) {
-    card.pile_position = pile.array.length - 1;
-    pile.array.push(card);
+async function addCardToPile(card: Card, pile: Pile) {
+    card.pile_position = pile.array.length;
 
     const pile_box = document.getElementById(`pile_${pile.id}`)!;
     const card_element = document.createElement('img');
@@ -216,7 +217,28 @@ function addCardToPile(card: Card, pile: Pile) {
     card_element.src = `/cards/${card.suit}/${card.value}.png`;
     card_element.classList.add('absolute', 'w-24', 'h-40', 'rounded-lg');
 
+    if (pile.id == 5) {
+        card_element.addEventListener('dragstart', (event) => {
+            dragStart(event, card);
+        });
+
+        card_element.draggable = true;
+        card_element.classList.add('cursor-grab');
+
+        if (pile.array.length > 0) {
+            const last_card_element = document.getElementById(
+                `card-${pile.array[pile.array.length - 1].id}`
+            )!;
+
+            last_card_element.draggable = false;
+            last_card_element.classList.remove('cursor-grab');
+        }
+    }
+
+    card!.current_pile = pile.id;
+
     pile_box.appendChild(card_element);
+    pile.array.push(card);
 }
 
 function clearPile(pile: Pile) {
@@ -316,12 +338,19 @@ function dragLeave(event: DragEvent, pile: Pile) {
 
 async function onDrop(event: DragEvent, new_pile_id: number) {
     const cardID = event.dataTransfer!.getData('cardID');
-    const card = initial_pile.array.find((card) => card.id == parseInt(cardID));
+    const card =
+        initial_pile.array.find((card) => card.id == parseInt(cardID)) ||
+        leftover_pile.array.find((card) => card.id == parseInt(cardID));
 
-    initial_pile.array.splice(card!.pile_position, 1);
+    var isOnInitial = card!.current_pile === initial_pile.id ? true : false;
+
+    if (isOnInitial) {
+        initial_pile.array.splice(card!.pile_position, 1);
+    } else {
+        leftover_pile.array.splice(card!.pile_position, 1);
+    }
+
     document.getElementById(`card-${card!.id}`)!.remove();
-
-    card!.current_pile = new_pile_id;
 
     if (new_pile_id != 5) {
         const pile_element = document.getElementById(
@@ -359,8 +388,13 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
         }
 
         clearPile(leftover_pile);
+
         initial_pile.array = await shuffleCards(leftover_pile.array);
         leftover_pile.array = [];
+
+        initial_pile.array.forEach((card) => {
+            card.current_pile = 6;
+        });
 
         showCards(initial_pile);
         await alignCards(initial_pile.array);
@@ -370,7 +404,9 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
             game_status_text.value = 'Partida en curso';
         }, 2000);
     }
+
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
+    console.log(card);
 }
 
 // Visual functions
