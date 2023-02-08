@@ -263,6 +263,15 @@ function dragStart(event: DragEvent, card: Card) {
 }
 
 function dragOver(event: DragEvent, pile: Pile) {
+    const pile_element = document.getElementById(`pile_${pile.id}_box`)!;
+
+    if (pile.id == leftover_pile.id) {
+        pile_element.classList.remove('bg-blue-400');
+        pile_element.classList.add('bg-blue-300');
+        event.preventDefault();
+        return;
+    }
+
     var isValid = true;
 
     const current_color =
@@ -306,8 +315,6 @@ function dragOver(event: DragEvent, pile: Pile) {
         }
     }
 
-    const pile_element = document.getElementById(`pile_${pile.id}_box`)!;
-
     if (isValid) {
         pile_element.classList.remove('bg-green-600');
         pile_element.classList.add('bg-green-400');
@@ -322,9 +329,15 @@ function dragOver(event: DragEvent, pile: Pile) {
 
 function dragLeave(event: DragEvent, pile: Pile) {
     const pile_element = document.getElementById(`pile_${pile.id}_box`)!;
-    pile_element.classList.remove('bg-green-400');
-    pile_element.classList.remove('bg-red-600');
-    pile_element.classList.add('bg-green-600');
+
+    if (pile.id == leftover_pile.id) {
+        pile_element.classList.remove('bg-blue-300');
+        pile_element.classList.add('bg-blue-400');
+    } else {
+        pile_element.classList.remove('bg-green-400');
+        pile_element.classList.remove('bg-red-600');
+        pile_element.classList.add('bg-green-600');
+    }
 }
 
 async function onDrop(event: DragEvent, new_pile_id: number) {
@@ -343,10 +356,12 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
 
     document.getElementById(`card-${card!.id}`)!.remove();
 
-    if (new_pile_id != 5) {
-        const pile_element = document.getElementById(
-            `pile_${new_pile_id}_box`
-        )!;
+    const pile_element = document.getElementById(`pile_${new_pile_id}_box`)!;
+
+    if (new_pile_id == leftover_pile.id) {
+        pile_element.classList.remove('bg-blue-300');
+        pile_element.classList.add('bg-blue-400');
+    } else {
         pile_element.classList.remove('bg-green-400');
         pile_element.classList.remove('bg-red-600');
         pile_element.classList.add('bg-green-600');
@@ -549,8 +564,10 @@ onMounted(() => {
                 <!-- Leftover Cards -->
                 <div
                     @drop="onDrop($event, leftover_pile.id)"
-                    @dragover.prevent
+                    @dragover="dragOver($event, leftover_pile)"
                     @dragenter.prevent
+                    @dragleave="dragLeave($event, leftover_pile)"
+                    :id="`pile_${leftover_pile.id}_box`"
                     class="relative flex bg-blue-400 leftover_cards_box">
                     <div
                         :id="`pile_${leftover_pile.id}`"
