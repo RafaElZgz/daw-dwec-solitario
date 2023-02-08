@@ -224,15 +224,6 @@ async function addCardToPile(card: Card, pile: Pile) {
 
         card_element.draggable = true;
         card_element.classList.add('cursor-grab');
-
-        if (pile.array.length > 0) {
-            const last_card_element = document.getElementById(
-                `card-${pile.array[pile.array.length - 1].id}`
-            )!;
-
-            last_card_element.draggable = false;
-            last_card_element.classList.remove('cursor-grab');
-        }
     }
 
     card!.current_pile = pile.id;
