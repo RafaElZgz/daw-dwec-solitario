@@ -94,7 +94,6 @@ async function restart() {
 }
 
 function endGame() {
-    // TODO : Hay que desarrollar este método
     setTimeout(() => {
         isPlaying = false;
         game_status_text.value = 'Partida finalizada';
@@ -450,8 +449,6 @@ onMounted(() => {
         navigateTo('mobile');
     }
 
-    start();
-
     best_time = parseInt(localStorage.getItem('best_time') || '-1');
     best_time_string.value = new Date(best_time * 1000)
         .toISOString()
@@ -460,6 +457,8 @@ onMounted(() => {
     best_amount_movements = parseInt(
         localStorage.getItem('best_amount_movements') || '-1'
     );
+
+    start();
 });
 </script>
 
