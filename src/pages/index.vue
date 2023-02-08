@@ -31,7 +31,7 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const cards_per_suite = 2;
+const cards_per_suite = 12;
 const amount_cards = cards_per_suite * suits.length;
 
 // Valid configuration check
@@ -397,7 +397,6 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
     }
 
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
-    console.log(card);
 }
 
 // Visual functions
