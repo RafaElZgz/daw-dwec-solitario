@@ -31,7 +31,7 @@ const suits = ['oval', 'circle', 'square', 'hexagon'];
 */
 
 // Constants
-const cards_per_suite = 12;
+const cards_per_suite = 1;
 const amount_cards = cards_per_suite * suits.length;
 
 // Valid configuration check
@@ -67,9 +67,12 @@ const instructions = [
     'El juego termina cuando el mazo auxiliar esté vacío y no haya más cartas por sacar.',
 ];
 
-let best_time: number;
-let best_time_string = ref('');
-let best_amount_movements: number;
+let best_stats = {} as {
+    time: number;
+    amount_movements: number;
+};
+
+let best_stats_time_string = ref('00:00:00');
 
 /*
     Main functions
@@ -98,23 +101,21 @@ function endGame() {
         isPlaying = false;
         game_status_text.value = 'Partida finalizada';
 
-        if (best_time == -1 || played_time < best_time) {
-            best_time = played_time;
-            best_time_string.value = played_time_string.value;
+        console.log(best_stats);
+
+        if (best_stats.time == -1 || played_time < best_stats.time) {
+            best_stats.time = played_time;
+            best_stats_time_string.value = played_time_string.value;
         }
 
         if (
-            best_amount_movements == -1 ||
-            amount_movements < best_amount_movements
+            best_stats.amount_movements == -1 ||
+            amount_movements < best_stats.amount_movements
         ) {
-            best_amount_movements = amount_movements;
+            best_stats.amount_movements = amount_movements;
         }
 
-        localStorage.setItem('best_time', best_time.toString());
-        localStorage.setItem(
-            'best_amount_movements',
-            best_amount_movements.toString()
-        );
+        localStorage.setItem('best_stats', JSON.stringify(best_stats));
 
         document.getElementById('win_modal_button')!.click();
     }, 1000);
@@ -449,14 +450,14 @@ onMounted(() => {
         navigateTo('mobile');
     }
 
-    best_time = parseInt(localStorage.getItem('best_time') || '-1');
-    best_time_string.value = new Date(best_time * 1000)
+    best_stats = JSON.parse(
+        localStorage.getItem('best_stats') ||
+            '{"time": -1, "amount_movements": -1}'
+    );
+
+    best_stats_time_string.value = new Date(best_stats.time * 1000)
         .toISOString()
         .slice(11, 19);
-
-    best_amount_movements = parseInt(
-        localStorage.getItem('best_amount_movements') || '-1'
-    );
 
     start();
 });
@@ -709,13 +710,13 @@ onMounted(() => {
                                 <li>
                                     Tiempo -
                                     <span class="text-primary-600">
-                                        {{ best_time_string }}
+                                        {{ best_stats_time_string }}
                                     </span>
                                 </li>
                                 <li>
                                     Movimientos -
                                     <span class="text-primary-600">
-                                        {{ best_amount_movements }}
+                                        {{ best_stats.amount_movements }}
                                     </span>
                                 </li>
                             </ul>
