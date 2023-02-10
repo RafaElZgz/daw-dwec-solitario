@@ -74,6 +74,20 @@ let best_stats = {} as {
 
 let best_stats_time_string = ref('00:00:00');
 
+let current_game_status = {} as {
+    isPlaying: boolean;
+    time: number;
+    amount_movements: number;
+    piles: {
+        initial_pile: Pile;
+        leftover_pile: Pile;
+        pile_1: Pile;
+        pile_2: Pile;
+        pile_3: Pile;
+        pile_4: Pile;
+    };
+};
+
 /*
     Main functions
 */
@@ -101,8 +115,6 @@ function endGame() {
         isPlaying = false;
         game_status_text.value = 'Partida finalizada';
 
-        console.log(best_stats);
-
         if (best_stats.time == -1 || played_time < best_stats.time) {
             best_stats.time = played_time;
             best_stats_time_string.value = played_time_string.value;
@@ -115,7 +127,7 @@ function endGame() {
             best_stats.amount_movements = amount_movements;
         }
 
-        localStorage.setItem('best_stats', JSON.stringify(best_stats));
+        localStorage.setItem('best_stats', btoa(JSON.stringify(best_stats)));
 
         document.getElementById('win_modal_button')!.click();
     }, 1000);
@@ -230,6 +242,33 @@ async function addCardToPile(card: Card, pile: Pile) {
 
     pile_box.appendChild(card_element);
     pile.array.push(card);
+}
+
+function fillPilesFromLocalStorage(pile: Pile) {
+    pile.array.forEach((card) => {
+        const board = document.getElementById(`pile_${pile.id}`)!;
+        const card_element = document.createElement('img');
+
+        card_element.draggable = false;
+        card_element.id = `card-${card.id}`;
+        card_element.src = `/cards/${card.suit}/${card.value}.png`;
+        card_element.classList.add('absolute', 'w-24', 'h-40', 'rounded-lg');
+
+        if (pile.id == 5) {
+            card_element.addEventListener('dragstart', (event) => {
+                dragStart(event, card);
+            });
+
+            card_element.draggable = true;
+            card_element.classList.add('cursor-grab');
+        }
+
+        card_element.addEventListener('dragstart', (event) => {
+            dragStart(event, card);
+        });
+
+        board.appendChild(card_element);
+    });
 }
 
 function clearPile(pile: Pile) {
@@ -451,15 +490,70 @@ onMounted(() => {
     }
 
     best_stats = JSON.parse(
-        localStorage.getItem('best_stats') ||
-            '{"time": -1, "amount_movements": -1}'
+        atob(
+            localStorage.getItem('best_stats') ||
+                btoa('{"time": -1, "amount_movements": -1}')
+        )
     );
 
     best_stats_time_string.value = new Date(best_stats.time * 1000)
         .toISOString()
         .slice(11, 19);
 
-    start();
+    current_game_status = JSON.parse(
+        localStorage.getItem('current_game_status') || '{}'
+    );
+
+    if (current_game_status.isPlaying) {
+        isPlaying = current_game_status.isPlaying;
+        played_time = current_game_status.time;
+        amount_movements = current_game_status.amount_movements;
+
+        initial_pile = current_game_status.piles.initial_pile;
+        leftover_pile = current_game_status.piles.leftover_pile;
+        pile_1 = current_game_status.piles.pile_1;
+        pile_2 = current_game_status.piles.pile_2;
+        pile_3 = current_game_status.piles.pile_3;
+        pile_4 = current_game_status.piles.pile_4;
+
+        fillPilesFromLocalStorage(leftover_pile);
+        fillPilesFromLocalStorage(pile_1);
+        fillPilesFromLocalStorage(pile_2);
+        fillPilesFromLocalStorage(pile_3);
+        fillPilesFromLocalStorage(pile_4);
+
+        showCards(initial_pile);
+
+        alignCards(initial_pile.array);
+        makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
+
+        game_status_text.value = 'Partida en curso';
+    } else {
+        start();
+    }
+
+    window.onbeforeunload = function (event) {
+        current_game_status = {
+            isPlaying: isPlaying,
+            time: played_time,
+            amount_movements: amount_movements,
+            piles: {
+                initial_pile: initial_pile,
+                leftover_pile: leftover_pile,
+                pile_1: pile_1,
+                pile_2: pile_2,
+                pile_3: pile_3,
+                pile_4: pile_4,
+            },
+        };
+
+        localStorage.setItem(
+            'current_game_status',
+            JSON.stringify(current_game_status)
+        );
+
+        event.returnValue = '¿Seguro que quieres salir?';
+    };
 });
 </script>
 
