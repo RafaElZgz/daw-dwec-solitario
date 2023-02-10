@@ -501,7 +501,7 @@ onMounted(() => {
         .slice(11, 19);
 
     current_game_status = JSON.parse(
-        localStorage.getItem('current_game_status') || '{}'
+        atob(localStorage.getItem('current_game_status') || btoa('{}'))
     );
 
     if (current_game_status.isPlaying) {
@@ -549,7 +549,7 @@ onMounted(() => {
 
         localStorage.setItem(
             'current_game_status',
-            JSON.stringify(current_game_status)
+            btoa(JSON.stringify(current_game_status))
         );
 
         event.returnValue = '¿Seguro que quieres salir?';
