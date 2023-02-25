@@ -1,12 +1,21 @@
 <script lang="ts" setup>
-import { initModals } from 'flowbite';
+/*
+    Importación de librerias dedicadas a la parte gráfica.
+*/
+
+import { initModals } from 'flowbite'; // Modales hechos a partir de la librería llamada Flowbite.
 import {
     ExclamationCircleIcon,
     FaceSmileIcon,
     InformationCircleIcon,
     XMarkIcon,
-} from '@heroicons/vue/24/outline';
+} from '@heroicons/vue/24/outline'; // Iconos en formato SVG.
 
+/*
+    Definición de los objetos [Hecho en TypeScript]
+*/
+
+// Objeto carta que guarda: un identificador, el palo de la carta, el valor de la carta, la pila actual en la que se encuentra y la posición en la misma.
 interface Card {
     id: number;
     suit: string;
@@ -15,55 +24,65 @@ interface Card {
     pile_position: number;
 }
 
+// Objeto pila que almacena: un identificador y un array del objeto carta.
 interface Pile {
     id: number;
     array: Card[];
 }
 
+/*
+    Creación de variables y constantes.
+*/
+
+// Lista de palos que puede tener una carta (se va a utilizar a la hora de generar las cartas).
 const suits = ['oval', 'circle', 'square', 'hexagon'];
 
-const cards_per_suite = 1;
-const amount_cards = cards_per_suite * suits.length;
+// Ajustes del juego, creados para tener una depuración más sencilla.
 
-if (cards_per_suite > 12) {
-    throw new Error(`La cantidad de cartas por mazo debe ser menor a 12`);
+const cards_per_suite = 1; // Cantidad de cartas que van a haber por palo.
+const amount_cards = cards_per_suite * suits.length; // Cantidad de cartas que van a haber en total (cartas por palo por el número total de palos que hay).
+
+// Comprobación de que los ajustes se han establecido bien.
+if (cards_per_suite > 12 || cards_per_suite < 1) {
+    throw new Error(
+        `La cantidad de cartas por mazo debe ser mayor o igual a 1 y menor a 12`
+    );
 }
 
-let amount_movements = 0;
-let played_time = 0;
-let played_time_string = ref('00:00:00');
+// Variables del juego que van a ir cambiando.
 
-var isPlaying = false;
+let amount_movements = 0; // Cantidad de movimientos que ha realizado el usuario en la partida.
+let played_time = 0; // Cantidad de tiempo que ha transcurrido desde el comienzo de la partida, en segundos.
+let played_time_string = ref('00:00:00'); // Representación del tiempo en formato string, para su correcta visualización en la interfaz del usuario.
 
-let initial_pile = { id: 6, array: [] } as Pile;
-let leftover_pile = { id: 5, array: [] } as Pile;
+var isPlaying = false; // Booleano que indica si la partida esta en transcurso o no.
 
+let initial_pile = { id: 6, array: [] } as Pile; // Creación de la pila incial.
+let leftover_pile = { id: 5, array: [] } as Pile; // Creación de la pila auxiliar.
+
+// Creación de las pilas 1 a 4.
 let pile_1 = { id: 1, array: [] } as Pile;
 let pile_2 = { id: 2, array: [] } as Pile;
 let pile_3 = { id: 3, array: [] } as Pile;
 let pile_4 = { id: 4, array: [] } as Pile;
 
+// Variable auxiliar que referencia el objeto de la carta actual que está en juego.
 let current_playing_card: Card =
     initial_pile.array[initial_pile.array.length - 1];
 
+// String que indica el estado actual de la partida.
 let game_status_text = ref('Juego no iniciado');
 
-const instructions = [
-    'El objetivo es repartir las 48 cartas en 4 mazos distintos, de 12 cartas cada uno.',
-    'Hay que colocar las cartas en orden de mayor a menor valor, comenzando con el número 12.',
-    'Una carta no puede colocarse encima de otra de su mismo color.',
-    'Utiliza el mazo auxiliar (de color azul) para almacenar las cartas que no puedas colocar.',
-    'Cuando ya no haya más cartas por sacar, las cartas del mazo auxiliar se mezclaran y volverán a estar disponibles.',
-    'El juego termina cuando el mazo auxiliar esté vacío y no haya más cartas por sacar.',
-];
+// String que se va a utilizar para mostrar en la interfaz de usuario cual es el mejor tiempo historico.
+let best_stats_time_string = ref('00:00:00');
 
+// Objeto de mejores estadísticas, se crea vacío, pero se define que variables va a tener.
 let best_stats = {} as {
     time: number;
     amount_movements: number;
 };
 
-let best_stats_time_string = ref('00:00:00');
-
+// Objeto de mejores estadísticas, se crea vacío, pero se define que variables va a tener. Necesario para guardar el estado del juego cuando el usuario cierra la pestaña.
 let current_game_status = {} as {
     isPlaying: boolean;
     time: number;
@@ -78,29 +97,52 @@ let current_game_status = {} as {
     };
 };
 
+// Listado de instrucciones del juego.
+const instructions = [
+    'El objetivo es repartir las 48 cartas en 4 mazos distintos, de 12 cartas cada uno.',
+    'Hay que colocar las cartas en orden de mayor a menor valor, comenzando con el número 12.',
+    'Una carta no puede colocarse encima de otra de su mismo color.',
+    'Utiliza el mazo auxiliar (de color azul) para almacenar las cartas que no puedas colocar.',
+    'Cuando ya no haya más cartas por sacar, las cartas del mazo auxiliar se mezclaran y volverán a estar disponibles.',
+    'El juego termina cuando el mazo auxiliar esté vacío y no haya más cartas por sacar.',
+];
+
+/*
+    Funciones del juego.
+*/
+
+// Función que da comienzo al juego, no devuelve nada. Utilizada al comenzar una partida, ya sea de 0 o por reinicio. No se utiliza cuando ya hay una partida guardada en al almacenamiento local.
 async function start() {
-    initial_pile.array = await shuffleCards(generateCards());
+    initial_pile.array = await shuffleCards(generateCards()); // Se generan las cartas de la pila inicial y luego se mezclan.
 
-    showCards(initial_pile);
+    showCards(initial_pile); // Se muestran las cartas de la pila inicial.
 
-    await alignCards(initial_pile.array);
-    await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
+    await alignCards(initial_pile.array); // Se alinean de forma escalonada las cartas de la pila inicial.
+    await makeDraggable(initial_pile.array[initial_pile.array.length - 1]); // Se establece que la última carta de la pila sea la que se puede jugar.
 }
 
+// Función de reinicio de la partida, no devuelve nada. Utilizada cuando el jugador gana o cuando le da al botón de reinicio.
 async function restart() {
-    clearPiles();
-    start();
+    clearPiles(); // Se vacian todas las pilas.
+    start(); // Se vuelven a generar y mostrar las cartas iniciales.
+
+    // Se establece que la partida ya no está en juego y se resetean a 0 las estadísticas  de la partida.
     isPlaying = false;
     amount_movements = 0;
     played_time = 0;
     played_time_string.value = '00:00:00';
 }
 
+// Función que se llama cuando el jugador termina una partida, no devuelve nada.
 function endGame() {
     setTimeout(() => {
+        // Se establece un retraso de 1 segundo para empezar la ejecución.
+
+        // Se establece que la partida ya no está en transcurso.
         isPlaying = false;
         game_status_text.value = 'Partida finalizada';
 
+        // En caso de que las mejores estadísticas históricas hayan sido batidas, estan se sobreescribiran.
         if (best_stats.time == -1 || played_time < best_stats.time) {
             best_stats.time = played_time;
             best_stats_time_string.value = played_time_string.value;
@@ -113,22 +155,27 @@ function endGame() {
             best_stats.amount_movements = amount_movements;
         }
 
+        // Se establecen las nuevas mejores estadísticas históricas, es posible que estas no hayan cambiado.
         localStorage.setItem('best_stats', btoa(JSON.stringify(best_stats)));
 
+        // Se muestra el modal del final de partida.
         document.getElementById('win_modal_button')!.click();
     }, 1000);
 }
 
+// Función dedicada a parar la ejecución durante una cantidad determinada de milisegundos, que se le pasa como parámetro.
 function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Función que genera un array de cartas y lo devuelve.
 function generateCards(): Card[] {
     let pile = [] as Card[];
 
     let current_suite = 0;
     let current_value = 1;
 
+    // Va generando carta por carta, teniendo en cuenta la cantidad de cartas que se van a generar y la cantidad de palos que hay.
     for (let i = 0; i < amount_cards; i++) {
         const card: Card = {
             id: i,
@@ -147,9 +194,11 @@ function generateCards(): Card[] {
             current_suite += 1;
         }
     }
+
     return pile;
 }
 
+// Función que devuelve un array de cartas, que se le pasa como parámetro, mezclado de forma aleatoria.
 async function shuffleCards(pile: Card[]): Promise<Card[]> {
     let result_pile = pile.sort((a, b) => 0.5 - Math.random()) as Card[];
 
@@ -160,17 +209,19 @@ async function shuffleCards(pile: Card[]): Promise<Card[]> {
     return result_pile;
 }
 
+// Función que agrega un objeto carta a una pila. Tanto la carta como la pila se pasan como parámetro. También se encarga de mostrar en la interfaz dicha agregación. No devuelve nada.
 async function addCardToPile(card: Card, pile: Pile) {
-    card.pile_position = pile.array.length;
+    card.pile_position = pile.array.length; // La nueva posición de la carta será igual al tamaño actual de la pila dónde se va a agregar.
 
-    const pile_box = document.getElementById(`pile_${pile.id}`)!;
-    const card_element = document.createElement('img');
+    const pile_box = document.getElementById(`pile_${pile.id}`)!; // Se coge el elemento HTML al cual se le va a agregar la carta.
+    const card_element = document.createElement('img'); // Se crea el elemento de la carta movida en el HTML.
 
-    card_element.draggable = false;
-    card_element.id = `card-${card.id}`;
-    card_element.src = `/cards/${card.suit}/${card.value}.png`;
-    card_element.classList.add('absolute', 'w-24', 'h-40', 'rounded-lg');
+    card_element.draggable = false; // Se establece que la nueva carta no va a poder moverse.
+    card_element.id = `card-${card.id}`; // Se le da el id de la carta al nuevo elemento HTML.
+    card_element.src = `/cards/${card.suit}/${card.value}.png`; // Se escoge la imagen que corresponde a la carta.
+    card_element.classList.add('absolute', 'w-24', 'h-40', 'rounded-lg'); // Se le añaden las oportunas clases CSS.
 
+    // Si la nueva pila de la carta es la auxiliar, entonces se va a poder mover.
     if (pile.id == 5) {
         card_element.addEventListener('dragstart', (event) => {
             dragStart(event, card);
@@ -180,13 +231,16 @@ async function addCardToPile(card: Card, pile: Pile) {
         card_element.classList.add('cursor-grab');
     }
 
-    card!.current_pile = pile.id;
+    card!.current_pile = pile.id; // Se establece la nueva pila en la que está la carta.
 
+    // Se agrega la carta a la nueva pila, tanto en la interfaz como en el objeto.
     pile_box.appendChild(card_element);
     pile.array.push(card);
 }
 
-function fillPilesFromLocalStorage(pile: Pile) {
+// Esta función se ejecuta en el caso de que haya una partida en transcurso guardada en el almacenamiento local. Se le pasa como parámetro la pila que se va a mostrar a partir de los datos guardados. No devuelve nada.
+function showPileFromLocalStorage(pile: Pile) {
+    // Para cada carta dentro de la pila se crea el elemento HTML y se le establecen los parámetros que correspondan, al igual que se hace en la función addCardToPile.
     pile.array.forEach((card) => {
         const board = document.getElementById(`pile_${pile.id}`)!;
         const card_element = document.createElement('img');
@@ -213,12 +267,14 @@ function fillPilesFromLocalStorage(pile: Pile) {
     });
 }
 
+// Función que borra todos los elementos HTML de una pila, que se pasa como parámetro. No devuelve nada.
 function clearPile(pile: Pile) {
     pile.array.forEach((card) => {
         document.getElementById(`card-${card.id}`)!.remove();
     });
 }
 
+// Función que vacía todas las pilas, borrando todos los elementos HTML que sean una carta. No devuelve nada.
 function clearPiles() {
     clearPile(initial_pile);
     initial_pile.array = [];
@@ -234,7 +290,9 @@ function clearPiles() {
     pile_4.array = [];
 }
 
+// Función destinada a mostrar las cartas de una pila determinada, que se pasa como parámetro. No devuelve nada.
 function showCards(pile: Pile) {
+    // Para cada carta de la pila se crea su respectivo elemento HTML y se le establecen los parámetros que corresponda.
     pile.array.forEach((card) => {
         const board = document.getElementById(`pile_${pile.id}`)!;
         const card_element = document.createElement('img');
@@ -259,7 +317,9 @@ function showCards(pile: Pile) {
     });
 }
 
+// Función que muestra de forma escalonada las cartas de un array, que se le pasa como parámetro. No devuelve nada.
 async function alignCards(cards: Card[]) {
+    // Para cada objeto del array se coge el elemento HTML que le corresponda y se le establecen los valores ajustados.
     for (const card of cards) {
         const card_element = document.getElementById(`card-${card.id}`)!;
 
@@ -267,14 +327,15 @@ async function alignCards(cards: Card[]) {
         card_element.style.left = `${card.pile_position * 6}px`;
         card_element.style.zIndex = `${card.pile_position}`;
 
-        await sleep(20);
+        await sleep(20); // Cada 20 milisegundos se para la ejecución, para dar un efecto visual que simula que las cartas se van colocando poco a poco.
     }
 }
 
+// Función que se utiliza para hacer jugable una carta determinada, que se pasa como parámetro. No devuelve nada.
 async function makeDraggable(card: Card) {
-    const card_element = document.getElementById(`card-${card.id}`)!;
-    card_element.draggable = true;
-    card_element.classList.add('cursor-grab');
+    const card_element = document.getElementById(`card-${card.id}`)!; // Coge el elemento HTML que le corresponde a la carta.
+    card_element.draggable = true; // La hace movible/jugable.
+    card_element.classList.add('cursor-grab'); // Agrega un efecto visual vía CSS.
 }
 
 function dragStart(event: DragEvent, card: Card) {
@@ -482,11 +543,11 @@ onMounted(() => {
         pile_3 = current_game_status.piles.pile_3;
         pile_4 = current_game_status.piles.pile_4;
 
-        fillPilesFromLocalStorage(leftover_pile);
-        fillPilesFromLocalStorage(pile_1);
-        fillPilesFromLocalStorage(pile_2);
-        fillPilesFromLocalStorage(pile_3);
-        fillPilesFromLocalStorage(pile_4);
+        showPileFromLocalStorage(leftover_pile);
+        showPileFromLocalStorage(pile_1);
+        showPileFromLocalStorage(pile_2);
+        showPileFromLocalStorage(pile_3);
+        showPileFromLocalStorage(pile_4);
 
         showCards(initial_pile);
 
@@ -827,8 +888,8 @@ onMounted(() => {
 
 <style>
 /*
-    Clases destinadas a conformar el grid principal
-*/
+        Clases CSS destinadas a conformar el grid principal
+    */
 
 .main_grid {
     display: grid;
@@ -841,21 +902,27 @@ onMounted(() => {
 .pile_1_box {
     grid-area: 8 / 1 / 13 / 2;
 }
+
 .pile_2_box {
     grid-area: 8 / 2 / 13 / 3;
 }
+
 .pile_3_box {
     grid-area: 8 / 3 / 13 / 4;
 }
+
 .pile_4_box {
     grid-area: 8 / 4 / 13 / 5;
 }
+
 .leftover_cards_box {
     grid-area: 3 / 4 / 8 / 5;
 }
+
 .buttons_box {
     grid-area: 1 / 4 / 3 / 5;
 }
+
 .main_pile_box {
     grid-area: 1 / 1 / 8 / 4;
 }
