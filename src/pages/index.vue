@@ -7,10 +7,6 @@ import {
     XMarkIcon,
 } from '@heroicons/vue/24/outline';
 
-/*
-    Definitions
-*/
-
 interface Card {
     id: number;
     suit: string;
@@ -26,15 +22,9 @@ interface Pile {
 
 const suits = ['oval', 'circle', 'square', 'hexagon'];
 
-/*
-    Variables
-*/
-
-// Constants
 const cards_per_suite = 1;
 const amount_cards = cards_per_suite * suits.length;
 
-// Valid configuration check
 if (cards_per_suite > 12) {
     throw new Error(`La cantidad de cartas por mazo debe ser menor a 12`);
 }
@@ -88,10 +78,6 @@ let current_game_status = {} as {
     };
 };
 
-/*
-    Main functions
-*/
-
 async function start() {
     initial_pile.array = await shuffleCards(generateCards());
 
@@ -133,10 +119,6 @@ function endGame() {
     }, 1000);
 }
 
-/*
-    Operation functions
-*/
-
 function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -176,46 +158,6 @@ async function shuffleCards(pile: Card[]): Promise<Card[]> {
     });
 
     return result_pile;
-}
-
-function clearPiles() {
-    clearPile(initial_pile);
-    initial_pile.array = [];
-    clearPile(leftover_pile);
-    leftover_pile.array = [];
-    clearPile(pile_1);
-    pile_1.array = [];
-    clearPile(pile_2);
-    pile_2.array = [];
-    clearPile(pile_3);
-    pile_3.array = [];
-    clearPile(pile_4);
-    pile_4.array = [];
-}
-
-function showCards(pile: Pile) {
-    pile.array.forEach((card) => {
-        const board = document.getElementById(`pile_${pile.id}`)!;
-        const card_element = document.createElement('img');
-
-        card_element.draggable = false;
-        card_element.id = `card-${card.id}`;
-        card_element.src = `/cards/${card.suit}/${card.value}.png`;
-        card_element.classList.add(
-            'absolute',
-            'w-24',
-            'h-40',
-            'transform',
-            'rounded-lg',
-            'select-none'
-        );
-
-        card_element.addEventListener('dragstart', (event) => {
-            dragStart(event, card);
-        });
-
-        board.appendChild(card_element);
-    });
 }
 
 async function addCardToPile(card: Card, pile: Pile) {
@@ -277,17 +219,63 @@ function clearPile(pile: Pile) {
     });
 }
 
-// Card functions
+function clearPiles() {
+    clearPile(initial_pile);
+    initial_pile.array = [];
+    clearPile(leftover_pile);
+    leftover_pile.array = [];
+    clearPile(pile_1);
+    pile_1.array = [];
+    clearPile(pile_2);
+    pile_2.array = [];
+    clearPile(pile_3);
+    pile_3.array = [];
+    clearPile(pile_4);
+    pile_4.array = [];
+}
+
+function showCards(pile: Pile) {
+    pile.array.forEach((card) => {
+        const board = document.getElementById(`pile_${pile.id}`)!;
+        const card_element = document.createElement('img');
+
+        card_element.draggable = false;
+        card_element.id = `card-${card.id}`;
+        card_element.src = `/cards/${card.suit}/${card.value}.png`;
+        card_element.classList.add(
+            'absolute',
+            'w-24',
+            'h-40',
+            'transform',
+            'rounded-lg',
+            'select-none'
+        );
+
+        card_element.addEventListener('dragstart', (event) => {
+            dragStart(event, card);
+        });
+
+        board.appendChild(card_element);
+    });
+}
+
+async function alignCards(cards: Card[]) {
+    for (const card of cards) {
+        const card_element = document.getElementById(`card-${card.id}`)!;
+
+        card_element.style.top = `${card.pile_position * 3}px`;
+        card_element.style.left = `${card.pile_position * 6}px`;
+        card_element.style.zIndex = `${card.pile_position}`;
+
+        await sleep(20);
+    }
+}
 
 async function makeDraggable(card: Card) {
     const card_element = document.getElementById(`card-${card.id}`)!;
     card_element.draggable = true;
     card_element.classList.add('cursor-grab');
 }
-
-// Touch functions
-
-// Drag and drop functions
 
 function dragStart(event: DragEvent, card: Card) {
     event.dataTransfer!.effectAllowed = 'move';
@@ -322,12 +310,10 @@ function dragOver(event: DragEvent, pile: Pile) {
     let last_color = 'not_defined';
 
     if (pile.array.length >= cards_per_suite) {
-        // El mazo esta lleno, no se puede mover la carta aquí
         isValid = false;
     }
 
     if (pile.array.length < 1) {
-        // Solo se puede mover la carta de mayor valor a un mazo vacío
         if (current_playing_card.value != cards_per_suite) {
             isValid = false;
         }
@@ -342,14 +328,12 @@ function dragOver(event: DragEvent, pile: Pile) {
             pile.array[pile.array.length - 1].value - 1 !=
             current_playing_card.value
         ) {
-            // La carta no se puede mover a este mazo porque la carta superior es de mayor valor
             isValid = false;
         }
     }
 
     if (last_color != 'not_defined') {
         if (current_color === last_color) {
-            // La carta no se puede mover a este mazo porque la carta superior es del mismo color
             isValid = false;
         }
     }
@@ -453,20 +437,6 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 }
 
-// Visual functions
-
-async function alignCards(cards: Card[]) {
-    for (const card of cards) {
-        const card_element = document.getElementById(`card-${card.id}`)!;
-
-        card_element.style.top = `${card.pile_position * 3}px`;
-        card_element.style.left = `${card.pile_position * 6}px`;
-        card_element.style.zIndex = `${card.pile_position}`;
-
-        await sleep(20);
-    }
-}
-
 function updateTime() {
     if (!isPlaying) return;
     played_time += 1;
@@ -474,10 +444,6 @@ function updateTime() {
         .toISOString()
         .slice(11, 19);
 }
-
-/*
-    Events
-*/
 
 onMounted(() => {
     initModals();
@@ -559,7 +525,7 @@ onMounted(() => {
 
 <template>
     <div class="flex flex-col h-screen">
-        <!-- Header -->
+        <!-- Cabecera -->
         <header class="flex flex-col pt-6 mx-auto select-none">
             <div class="flex flex-row py-4 mx-auto text-center">
                 <h1 class="text-4xl">Solitario</h1>
@@ -591,10 +557,11 @@ onMounted(() => {
                 </button>
             </div>
         </header>
-        <!-- Content -->
+
+        <!-- Contenido principal -->
         <main class="flex h-full py-4">
             <div class="m-auto main_grid w-[48rem] h-[40rem]">
-                <!-- Piles -->
+                <!-- Pilas -->
                 <div
                     @drop="onDrop($event, pile_1.id)"
                     @dragover="dragOver($event, pile_1)"
@@ -655,7 +622,8 @@ onMounted(() => {
                         <span>{{ pile_4.array.length }}</span>
                     </div>
                 </div>
-                <!-- Leftover Cards -->
+
+                <!-- Cartas sobrantes -->
                 <div
                     @drop="onDrop($event, leftover_pile.id)"
                     @dragover="dragOver($event, leftover_pile)"
@@ -671,7 +639,8 @@ onMounted(() => {
                         <span>{{ leftover_pile.array.length }}</span>
                     </div>
                 </div>
-                <!-- Restart Button -->
+
+                <!-- Botón de reinicio -->
                 <div
                     class="flex border border-gray-400 select-none buttons_box">
                     <button
@@ -682,7 +651,8 @@ onMounted(() => {
                         Reiniciar
                     </button>
                 </div>
-                <!-- Main Pile -->
+
+                <!-- Tablero inicial -->
                 <div
                     class="flex bg-gradient-to-r from-green-600 via-green-500 to-green-600 main_pile_box">
                     <div id="pile_6" class="relative flex w-full h-full m-4">
@@ -694,7 +664,8 @@ onMounted(() => {
                 </div>
             </div>
         </main>
-        <!-- Footer -->
+
+        <!-- Pie de página -->
         <footer class="py-4 mx-auto">
             <p class="text-md">
                 Powered by
@@ -705,7 +676,10 @@ onMounted(() => {
                 </NuxtLink>
             </p>
         </footer>
-        <!-- Restart Modal -->
+
+        <!-- Modales -->
+
+        <!-- Modal reinicio de partida -->
         <div
             id="restart_modal"
             tabindex="-1"
@@ -736,7 +710,8 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <!-- Win Modal -->
+
+        <!-- Modal partida finalizada  -->
         <button
             type="button"
             data-modal-target="win_modal"
@@ -819,7 +794,8 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <!-- Instructions Modal -->
+
+        <!-- Modal instrucciones del juego -->
         <div
             id="instructions_modal"
             tabindex="-1"
@@ -846,11 +822,14 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <!-- End -->
     </div>
 </template>
 
 <style>
+/*
+    Clases destinadas a conformar el grid principal
+*/
+
 .main_grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
