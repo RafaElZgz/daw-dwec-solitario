@@ -1,12 +1,20 @@
 <script lang="ts" setup>
-import { initModals } from 'flowbite';
+//Imports necesarios para el correcto funcionamiento de la aplicación
+import { initModals } from 'flowbite'; // Utilizaremos esto para los diseños
 import {
     ExclamationCircleIcon,
     FaceSmileIcon,
     InformationCircleIcon,
-    XMarkIcon,
-} from '@heroicons/vue/24/outline';
+    XMarkIcon, 
+} from '@heroicons/vue/24/outline'; // Alertas
 
+<<<<<<< HEAD
+=======
+/*
+    Definitions
+*/
+//Definición de el objeto carta
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
 interface Card {
     id: number;
     suit: string;
@@ -15,13 +23,23 @@ interface Card {
     pile_position: number;
 }
 
+//Definición de la pila
 interface Pile {
     id: number;
     array: Card[];
 }
 
+//Definición de las formas
 const suits = ['oval', 'circle', 'square', 'hexagon'];
 
+<<<<<<< HEAD
+=======
+/*
+    Variables
+*/
+
+// Constantes
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
 const cards_per_suite = 1;
 const amount_cards = cards_per_suite * suits.length;
 
@@ -29,25 +47,29 @@ if (cards_per_suite > 12) {
     throw new Error(`La cantidad de cartas por mazo debe ser menor a 12`);
 }
 
-let amount_movements = 0;
-let played_time = 0;
-let played_time_string = ref('00:00:00');
+let amount_movements = 0; // Movimientos realizados
+let played_time = 0;    // Tiempo Jugado
+let played_time_string = ref('00:00:00');   //El tiempo que se mostrara en string
 
-var isPlaying = false;
+var isPlaying = false; // Se muestra si actualmente se esta jugando 
 
-let initial_pile = { id: 6, array: [] } as Pile;
-let leftover_pile = { id: 5, array: [] } as Pile;
+let initial_pile = { id: 6, array: [] } as Pile; // Mesa principal de juego 
+let leftover_pile = { id: 5, array: [] } as Pile;   // Cuadro de cartas sobrantes
 
+//Pilas colocadas debajo del tablero principal de juego 
 let pile_1 = { id: 1, array: [] } as Pile;
 let pile_2 = { id: 2, array: [] } as Pile;
 let pile_3 = { id: 3, array: [] } as Pile;
 let pile_4 = { id: 4, array: [] } as Pile;
 
+// Carta que esta en movimiento actualmente
 let current_playing_card: Card =
     initial_pile.array[initial_pile.array.length - 1];
 
+// Texto que se muestra para demostrar en que estado esta 
 let game_status_text = ref('Juego no iniciado');
 
+// Instrucciones que funcionan al clickear en ¿Cómo se juega?
 const instructions = [
     'El objetivo es repartir las 48 cartas en 4 mazos distintos, de 12 cartas cada uno.',
     'Hay que colocar las cartas en orden de mayor a menor valor, comenzando con el número 12.',
@@ -56,14 +78,16 @@ const instructions = [
     'Cuando ya no haya más cartas por sacar, las cartas del mazo auxiliar se mezclaran y volverán a estar disponibles.',
     'El juego termina cuando el mazo auxiliar esté vacío y no haya más cartas por sacar.',
 ];
-
+ // Datos de las mejores puntuaciones
 let best_stats = {} as {
     time: number;
     amount_movements: number;
 };
 
+// Mejores puntuaciones en Strings
 let best_stats_time_string = ref('00:00:00');
 
+// Estado del juego actual
 let current_game_status = {} as {
     isPlaying: boolean;
     time: number;
@@ -78,6 +102,14 @@ let current_game_status = {} as {
     };
 };
 
+<<<<<<< HEAD
+=======
+/*
+    Main functions
+*/
+
+// Función de inicio de juego donde se inicializara y se mezclaran las cartas
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
 async function start() {
     initial_pile.array = await shuffleCards(generateCards());
 
@@ -87,6 +119,7 @@ async function start() {
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 }
 
+// Función de reinicio de juego donde empezaremos el juego eliminando datos anteriores
 async function restart() {
     clearPiles();
     start();
@@ -96,6 +129,7 @@ async function restart() {
     played_time_string.value = '00:00:00';
 }
 
+// Función de fin del juego mostraremos que el juego a finalizado
 function endGame() {
     setTimeout(() => {
         isPlaying = false;
@@ -119,10 +153,19 @@ function endGame() {
     }, 1000);
 }
 
+<<<<<<< HEAD
+=======
+/*
+    Operation functions
+*/
+
+// Inicializacion de funcion sleep
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
 function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Generamos las cartas individualmente
 function generateCards(): Card[] {
     let pile = [] as Card[];
 
@@ -150,6 +193,7 @@ function generateCards(): Card[] {
     return pile;
 }
 
+// Mezclamos las cartas 
 async function shuffleCards(pile: Card[]): Promise<Card[]> {
     let result_pile = pile.sort((a, b) => 0.5 - Math.random()) as Card[];
 
@@ -160,6 +204,51 @@ async function shuffleCards(pile: Card[]): Promise<Card[]> {
     return result_pile;
 }
 
+<<<<<<< HEAD
+=======
+// Limpiamos las pilas para poder reiniciar partidas
+function clearPiles() {
+    clearPile(initial_pile);
+    initial_pile.array = [];
+    clearPile(leftover_pile);
+    leftover_pile.array = [];
+    clearPile(pile_1);
+    pile_1.array = [];
+    clearPile(pile_2);
+    pile_2.array = [];
+    clearPile(pile_3);
+    pile_3.array = [];
+    clearPile(pile_4);
+    pile_4.array = [];
+}
+
+// Mostramos las cartas en el tablero
+function showCards(pile: Pile) {
+    pile.array.forEach((card) => {
+        const board = document.getElementById(`pile_${pile.id}`)!;
+        const card_element = document.createElement('img');
+
+        card_element.draggable = false;
+        card_element.id = `card-${card.id}`;
+        card_element.src = `/cards/${card.suit}/${card.value}.png`;
+        card_element.classList.add(
+            'absolute',
+            'w-24',
+            'h-40',
+            'transform',
+            'rounded-lg',
+            'select-none'
+        );
+
+        card_element.addEventListener('dragstart', (event) => {
+            dragStart(event, card);
+        });
+
+        board.appendChild(card_element);
+    });
+}
+ // Añadimos las cartas en la pila correspondiente
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
 async function addCardToPile(card: Card, pile: Pile) {
     card.pile_position = pile.array.length;
 
@@ -186,6 +275,7 @@ async function addCardToPile(card: Card, pile: Pile) {
     pile.array.push(card);
 }
 
+// Rellenamos las pilas desde LocalStorage
 function fillPilesFromLocalStorage(pile: Pile) {
     pile.array.forEach((card) => {
         const board = document.getElementById(`pile_${pile.id}`)!;
@@ -213,6 +303,7 @@ function fillPilesFromLocalStorage(pile: Pile) {
     });
 }
 
+// Remover carta de las pilas
 function clearPile(pile: Pile) {
     pile.array.forEach((card) => {
         document.getElementById(`card-${card.id}`)!.remove();
@@ -271,12 +362,21 @@ async function alignCards(cards: Card[]) {
     }
 }
 
+// Permitir a una carta que se pueda draggear o mover
 async function makeDraggable(card: Card) {
     const card_element = document.getElementById(`card-${card.id}`)!;
     card_element.draggable = true;
     card_element.classList.add('cursor-grab');
 }
 
+<<<<<<< HEAD
+=======
+// Touch functions
+
+// Drag and drop functions
+
+// Marcamos el inicio del juego para que el contador pueda empezar
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
 function dragStart(event: DragEvent, card: Card) {
     event.dataTransfer!.effectAllowed = 'move';
     event.dataTransfer!.setData('cardID', card.id.toString());
@@ -288,7 +388,7 @@ function dragStart(event: DragEvent, card: Card) {
 
     current_playing_card = card;
 }
-
+ // Controlamos los lugares donde se puede mover las cartas y como
 function dragOver(event: DragEvent, pile: Pile) {
     const pile_element = document.getElementById(`pile_${pile.id}_box`)!;
 
@@ -350,6 +450,7 @@ function dragOver(event: DragEvent, pile: Pile) {
     event.preventDefault();
 }
 
+// Modificamos el diseño donde seran colocadas las cartas
 function dragLeave(event: DragEvent, pile: Pile) {
     const pile_element = document.getElementById(`pile_${pile.id}_box`)!;
 
@@ -363,6 +464,7 @@ function dragLeave(event: DragEvent, pile: Pile) {
     }
 }
 
+// Lo que sucedera cuando se suelte la carta donde corresponda
 async function onDrop(event: DragEvent, new_pile_id: number) {
     const cardID = event.dataTransfer!.getData('cardID');
     const card =
@@ -437,6 +539,24 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
 }
 
+<<<<<<< HEAD
+=======
+// Visual functions
+// Hacer que se vean en diagonal y una encima de otra las cartas en el tapete incial
+async function alignCards(cards: Card[]) {
+    for (const card of cards) {
+        const card_element = document.getElementById(`card-${card.id}`)!;
+
+        card_element.style.top = `${card.pile_position * 3}px`;
+        card_element.style.left = `${card.pile_position * 6}px`;
+        card_element.style.zIndex = `${card.pile_position}`;
+
+        await sleep(20);
+    }
+}
+
+// Actualizar el tiempo conforme este pasa
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
 function updateTime() {
     if (!isPlaying) return;
     played_time += 1;
@@ -445,6 +565,14 @@ function updateTime() {
         .slice(11, 19);
 }
 
+<<<<<<< HEAD
+=======
+/*
+    Events
+*/
+
+// Registrar las devoluciones de las llamadas
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
 onMounted(() => {
     initModals();
     setInterval(() => updateTime(), 1000);
@@ -523,7 +651,8 @@ onMounted(() => {
 });
 </script>
 
-<template>
+<!--HTML-->
+<template> 
     <div class="flex flex-col h-screen">
         <!-- Cabecera -->
         <header class="flex flex-col pt-6 mx-auto select-none">
@@ -539,13 +668,13 @@ onMounted(() => {
                 <h3 class="p-4 mx-4 border border-gray-400">
                     Tiempo
                     <span class="ml-1 text-primary-600">
-                        {{ played_time_string }}
+                        {{ played_time_string }} <!--Obtenemos los datos del tiemp jugado del JS-->
                     </span>
                 </h3>
                 <h3 class="p-4 mx-4 border border-gray-400">
                     Movimientos
                     <span class="ml-1 text-primary-600">
-                        {{ amount_movements }}
+                        {{ amount_movements }} <!--Obtenemos los datos del numero de movimientos del JS-->
                     </span>
                 </h3>
                 <button
@@ -561,7 +690,12 @@ onMounted(() => {
         <!-- Contenido principal -->
         <main class="flex h-full py-4">
             <div class="m-auto main_grid w-[48rem] h-[40rem]">
+<<<<<<< HEAD
                 <!-- Pilas -->
+=======
+                <!-- Piles -->
+                <!--Colocamos todos los drags dentro del HTML-->
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
                 <div
                     @drop="onDrop($event, pile_1.id)"
                     @dragover="dragOver($event, pile_1)"
@@ -574,9 +708,10 @@ onMounted(() => {
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
-                        <span>{{ pile_1.array.length }}</span>
+                        <span>{{ pile_1.array.length }}</span> <!--Mostramos la cantidad de cartas que existe en cada pila-->
                     </div>
                 </div>
+                <!--Colocamos todos los drags dentro del HTML-->
                 <div
                     @drop="onDrop($event, pile_2.id)"
                     @dragover="dragOver($event, pile_2)"
@@ -589,9 +724,10 @@ onMounted(() => {
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
-                        <span>{{ pile_2.array.length }}</span>
+                        <span>{{ pile_2.array.length }}</span><!--Mostramos la cantidad de cartas que existe en cada pila-->
                     </div>
                 </div>
+                <!--Colocamos todos los drags dentro del HTML-->
                 <div
                     @drop="onDrop($event, pile_3.id)"
                     @dragover="dragOver($event, pile_3)"
@@ -604,9 +740,10 @@ onMounted(() => {
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
-                        <span>{{ pile_3.array.length }}</span>
+                        <span>{{ pile_3.array.length }}</span><!--Mostramos la cantidad de cartas que existe en cada pila-->
                     </div>
                 </div>
+                <!--Colocamos todos los drags dentro del HTML-->
                 <div
                     @drop="onDrop($event, pile_4.id)"
                     @dragover="dragOver($event, pile_4)"
@@ -619,11 +756,16 @@ onMounted(() => {
                         class="w-24 h-40 m-auto shadow-2xl select-none rounded-xl"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white border-2 rounded-full select-none border-primary-100 bg-primary-500 top-2 right-2">
-                        <span>{{ pile_4.array.length }}</span>
+                        <span>{{ pile_4.array.length }}</span><!--Mostramos la cantidad de cartas que existe en cada pila-->
                     </div>
                 </div>
+<<<<<<< HEAD
 
                 <!-- Cartas sobrantes -->
+=======
+                <!-- Leftover Cards -->
+                <!--Colocamos todos los drags dentro del HTML-->
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
                 <div
                     @drop="onDrop($event, leftover_pile.id)"
                     @dragover="dragOver($event, leftover_pile)"
@@ -636,7 +778,7 @@ onMounted(() => {
                         class="w-24 h-40 m-auto rounded-lg shadow-2xl select-none"></div>
                     <div
                         class="absolute inline-flex items-center justify-center w-8 h-8 text-lg font-bold text-white bg-blue-500 border-2 border-blue-200 rounded-full select-none top-2 right-2">
-                        <span>{{ leftover_pile.array.length }}</span>
+                        <span>{{ leftover_pile.array.length }}</span><!--Mostramos la cantidad de cartas que existe en cada pila-->
                     </div>
                 </div>
 
@@ -658,7 +800,7 @@ onMounted(() => {
                     <div id="pile_6" class="relative flex w-full h-full m-4">
                         <div
                             class="absolute text-sm font-semibold text-white select-none bottom-8 right-2">
-                            <span>{{ game_status_text }}</span>
+                            <span>{{ game_status_text }}</span><!--Mostramos estado actual del juego-->
                         </div>
                     </div>
                 </div>
@@ -690,15 +832,16 @@ onMounted(() => {
                         type="button"
                         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                         data-modal-hide="restart_modal">
-                        <XMarkIcon class="w-5 h-5" />
+                        <XMarkIcon class="w-5 h-5" /> <!--Iconos con heroicons-->
                         <span class="sr-only">Reiniciar partida</span>
                     </button>
                     <div class="p-6 text-center">
                         <ExclamationCircleIcon
-                            class="mx-auto mb-4 text-primary-400 w-14 h-14" />
+                            class="mx-auto mb-4 text-primary-400 w-14 h-14" /><!--Iconos con heroicons-->
                         <h3 class="mb-5 text-lg font-normal text-gray-500">
                             ¿Seguro que quieres volver a iniciar la partida?
                         </h3>
+                        <!--Botón de reinicio implementando la funcionalidad con JS-->
                         <button
                             data-modal-hide="restart_modal"
                             type="button"
@@ -732,15 +875,16 @@ onMounted(() => {
                         type="button"
                         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                         data-modal-hide="win_modal">
-                        <XMarkIcon class="w-5 h-5" />
+                        <XMarkIcon class="w-5 h-5" /><!--Iconos con heroicons-->
                         <span class="sr-only">Partida ganada</span>
                     </button>
                     <div class="p-6 text-center">
                         <FaceSmileIcon
-                            class="mx-auto mb-4 text-green-400 w-14 h-14" />
+                            class="mx-auto mb-4 text-green-400 w-14 h-14" /><!--Iconos con heroicons-->
                         <h3 class="mb-5 text-lg font-normal text-gray-500">
                             ¡Has ganado! ¿Quieres volver a jugar?
                         </h3>
+                        <!--Botón de reinicio implementando la funcionalidad con JS-->
                         <button
                             data-modal-hide="win_modal"
                             type="button"
@@ -758,13 +902,13 @@ onMounted(() => {
                                 <li>
                                     Tiempo -
                                     <span class="text-primary-600">
-                                        {{ played_time_string }}
+                                        {{ played_time_string }}<!--Tiempo jugado implementado con-->
                                     </span>
                                 </li>
                                 <li>
                                     Movimientos -
                                     <span class="text-primary-600">
-                                        {{ amount_movements }}
+                                        {{ amount_movements }}<!--Cantidad de movimientos implementado con JS-->
                                     </span>
                                 </li>
                             </ul>
@@ -779,13 +923,13 @@ onMounted(() => {
                                 <li>
                                     Tiempo -
                                     <span class="text-primary-600">
-                                        {{ best_stats_time_string }}
+                                        {{ best_stats_time_string }}<!--Mejores resultados de tiempo las partidas anteriores-->
                                     </span>
                                 </li>
                                 <li>
                                     Movimientos -
                                     <span class="text-primary-600">
-                                        {{ best_stats.amount_movements }}
+                                        {{ best_stats.amount_movements }}<!--Mejores resultados de movimientos las partidas anteriores-->
                                     </span>
                                 </li>
                             </ul>
@@ -806,17 +950,17 @@ onMounted(() => {
                         type="button"
                         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                         data-modal-hide="instructions_modal">
-                        <XMarkIcon class="w-5 h-5" />
+                        <XMarkIcon class="w-5 h-5" /><!--Iconos con heroicons-->
                         <span class="sr-only">Instrucciones del juego</span>
                     </button>
                     <div class="p-6 text-center">
                         <InformationCircleIcon
-                            class="mx-auto mb-4 text-blue-400 w-14 h-14" />
+                            class="mx-auto mb-4 text-blue-400 w-14 h-14" /><!--Iconos con heroicons-->
                         <h3 class="mb-5 text-lg font-normal text-gray-500">
                             Estas son las instrucciones del juego
                         </h3>
                         <ul class="text-left text-gray-400 list-decimal">
-                            <li v-for="text in instructions">{{ text }}</li>
+                            <li v-for="text in instructions">{{ text }}</li> <!--Instrucciones para saber como se juega-->
                         </ul>
                     </div>
                 </div>
@@ -827,9 +971,15 @@ onMounted(() => {
 
 <style>
 /*
+<<<<<<< HEAD
     Clases destinadas a conformar el grid principal
 */
 
+=======
+Aqui es donde hemos gestionado el diseño de los distintos tableros 
+ordenandolos con un grid
+*/
+>>>>>>> 7682b8b7c27ab6eb246e01840732acbf8a200e1b
 .main_grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
