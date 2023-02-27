@@ -111,7 +111,8 @@ let current_game_status = {} as {
     Funciones del juego.
 */
 
-// Función que da comienzo al juego, no devuelve nada. Utilizada al comenzar una partida, ya sea de 0 o por reinicio. No se utiliza cuando ya hay una partida guardada en al almacenamiento local.
+// Función que da comienzo al juego, no devuelve nada. Utilizada al comenzar una partida, ya sea de 0 o por reinicio. No se utiliza cuando ya hay una partida guardada
+// en al almacenamiento local.
 async function start() {
     initial_pile.array = await shuffleCards(generateCards()); // Se generan las cartas de la pila inicial y luego se mezclan.
 
@@ -238,11 +239,12 @@ async function addCardToPile(card: Card, pile: Pile) {
     pile.array.push(card);
 }
 
-// Esta función se ejecuta en el caso de que haya una partida en transcurso guardada en el almacenamiento local. Se le pasa como parámetro la pila que se va a mostrar a partir de los datos guardados. No devuelve nada.
+// Esta función se ejecuta en el caso de que haya una partida en transcurso guardada en el almacenamiento local. Se le pasa como parámetro la pila que se va a mostrar
+// a partir de los datos guardados. No devuelve nada.
 function showPileFromLocalStorage(pile: Pile) {
     // Para cada carta dentro de la pila se crea el elemento HTML y se le establecen los parámetros que correspondan, al igual que se hace en la función addCardToPile.
     pile.array.forEach((card) => {
-        const board = document.getElementById(`pile_${pile.id}`)!;
+        const board = document.getElementById(`pile_${pile.id}`)!; // Se coge el elemento HTML al cual se le va a agregar la carta, la pila que le pasamos como parámetro.
         const card_element = document.createElement('img');
 
         card_element.draggable = false;
@@ -250,6 +252,7 @@ function showPileFromLocalStorage(pile: Pile) {
         card_element.src = `/cards/${card.suit}/${card.value}.png`;
         card_element.classList.add('absolute', 'w-24', 'h-40', 'rounded-lg');
 
+        // Si el mazo es el auxiliar, entonces se va a poder mover la carta.
         if (pile.id == 5) {
             card_element.addEventListener('dragstart', (event) => {
                 dragStart(event, card);
@@ -263,7 +266,7 @@ function showPileFromLocalStorage(pile: Pile) {
             dragStart(event, card);
         });
 
-        board.appendChild(card_element);
+        board.appendChild(card_element); // Se agrega la carta a la interfaz.
     });
 }
 
@@ -353,6 +356,21 @@ function dragStart(event: DragEvent, card: Card) {
     current_playing_card = card;
 }
 
+// Función que se ejecuta cuando una carta se dragea fuera de una pila, se le pasa como parámetro el event Drag y la pila sobre la que se está drageando. No devuelve nada.
+function dragLeave(event: DragEvent, pile: Pile) {
+    const pile_element = document.getElementById(`pile_${pile.id}_box`)!; // Se coge el elemento HTML que le corresponde a la pila.
+
+    // Se aplican unos efectos visuales u otros en función de si la pila sobre la que se está drageando es la pila de cartas restantes o no.
+    if (pile.id == leftover_pile.id) {
+        pile_element.classList.remove('bg-blue-300');
+        pile_element.classList.add('bg-blue-400');
+    } else {
+        pile_element.classList.remove('bg-green-400');
+        pile_element.classList.remove('bg-red-600');
+        pile_element.classList.add('bg-green-600');
+    }
+}
+
 // Función que se ejecuta cuando una carta se dragea sobre una pila, se le pasa como parámetro el event Drag y la pila sobre la que se está drageando. No devuelve nada.
 function dragOver(event: DragEvent, pile: Pile) {
     const pile_element = document.getElementById(`pile_${pile.id}_box`)!; // Se coge el elemento HTML que le corresponde a la pila.
@@ -424,22 +442,8 @@ function dragOver(event: DragEvent, pile: Pile) {
     event.preventDefault();
 }
 
-// Función que se ejecuta cuando una carta se dragea fuera de una pila, se le pasa como parámetro el event Drag y la pila sobre la que se está drageando. No devuelve nada.
-function dragLeave(event: DragEvent, pile: Pile) {
-    const pile_element = document.getElementById(`pile_${pile.id}_box`)!; // Se coge el elemento HTML que le corresponde a la pila.
-
-    // Se aplican unos efectos visuales u otros en función de si la pila sobre la que se está drageando es la pila de cartas restantes o no.
-    if (pile.id == leftover_pile.id) {
-        pile_element.classList.remove('bg-blue-300');
-        pile_element.classList.add('bg-blue-400');
-    } else {
-        pile_element.classList.remove('bg-green-400');
-        pile_element.classList.remove('bg-red-600');
-        pile_element.classList.add('bg-green-600');
-    }
-}
-
-// Función que se ejecuta cuando se suelta una carta sobre una pila (para ello antes se ha tenido que validar que esto se puede hacer), se le pasa como parámetro el evento Drag y el id de la nueva pila de la carta. No devuelve nada.
+// Función que se ejecuta cuando se suelta una carta sobre una pila (para ello antes se ha tenido que validar que esto se puede hacer), se le pasa como parámetro el evento Drag
+// y el id de la nueva pila de la carta. No devuelve nada.
 async function onDrop(event: DragEvent, new_pile_id: number) {
     const cardID = event.dataTransfer!.getData('cardID'); // Se coge el id de la carta que se está dropeando.
     const card =
@@ -544,12 +548,14 @@ onMounted(() => {
     // Se comprueba si el dispositivo es táctil o no.
     var isTouchScreen = 'ontouchstart' in window;
 
-    // Si el dispositivo es táctil o la pantalla es menor de 800px de ancho, se redirige al url "/mobile", en dónde se indica que el juego no está adaptado para ser jugado en dichos dispositivos.
+    // Si el dispositivo es táctil o la pantalla es menor de 800px de ancho, se redirige al url "/mobile", en dónde se indica que el juego no está adaptado para ser jugado
+    // en dichos dispositivos.
     if (window.screen.availWidth < 800 || isTouchScreen) {
         navigateTo('mobile');
     }
 
-    // Se comprueba si hay una mejor puntuación guardada en el localStorage. Si no hay, se crea un objeto con los valores por defecto (-1). Se usan las funciones atob y btoa para codificar y decodificar el objeto a base64.
+    // Se comprueba si hay una mejor puntuación guardada en el localStorage. Si no hay, se crea un objeto con los valores por defecto (-1). Se usan las funciones atob y btoa para
+    // codificar y decodificar el objeto a base64.
     best_stats = JSON.parse(
         atob(
             localStorage.getItem('best_stats') ||
@@ -632,7 +638,8 @@ onMounted(() => {
     <!-- 
         Aquí empieza el código HTML de la página, no tiene nada en especial.
         Únicamente señalar que los eventos se llaman con un @ delante, carateristica propia de Vue, en lugar de el on(Nombre del evento) que se usa en HTML básico.
-        Vue támbien permite usar variables de JavaScript dentro del HTML, para ello se usa {{ Nombre de la variable }}. Y dentro de los atributos de los elementos HTML, se usa :Nombre del atributo="Nombre de la variable" o :Nombre del atributo="`${Nombre de la variable}`".
+        Vue támbien permite usar variables de JavaScript dentro del HTML, para ello se usa {{ Nombre de la variable }}. Y dentro de los atributos de los elementos HTML,
+        se usa :Nombre del atributo="Nombre de la variable" o :Nombre del atributo="`${Nombre de la variable}`".
         Recordar que toda la web usa TailwindCSS para el diseño.
     -->
 

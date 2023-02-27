@@ -85,6 +85,8 @@ Por último hemos usado dos librerías para crear la interfaz web, una es [**Her
 
 La interfaz, como ya se ha explicado antes, está contendia por completo entre las etiquetas **template**. Aquí va todo el código HTML. Las reglas CSS se encuentran entre las etiquetas **style**, aunque en este caso apenas se han creado reglas CSS, ya que ha usado Tailwind para casi todo.
 
+![Interfaz]()
+
 Se divide en 2 partes:
 
 -   La primera nos muestra las estadísticas del juego; cantidad de movimientos realizados y tiempo transcurrido. Y un botón para mostrar las intrucciones del juego.
@@ -145,4 +147,22 @@ Las siguientes dos funciones son **endGame()** y **sleep()**. Está última tien
 
 ![Funciones endGame y sleep]()
 
-Luego vienen las funciones **generateCards()** y **shuffleCards()**. Ambas funciones devuelven un array del objeto Carta. Ambas se ejecutan en la función **start()**, aunque tambien se usan en algún otro contexto, como cuando ...
+Luego vienen las funciones **generateCards()** y **shuffleCards()**. Ambas funciones devuelven un array del objeto Carta y se ejecutan en la función **start()**. La primera crea las cartas, y la segunda las baraja. Está segunda función también se usa para barajar las cartas del mazo auxiliar, cuando el tablero se vacía.
+
+![Funciones generateCards y shuffleCards]()
+
+Seguimos con la función **addCardToPile()**. Aquí añadimos una carta bien al mazo auxiliar, o a uno de los 4 mazos principales. Tanto el objeto de la carta a añadir como el del mazo al que irá, se pasan como parámetros.
+
+![Función addCardToPile]()
+
+Vamos con las funciones **showPileFromLocalStorage()** y **clearPile()**. La primera se va a ejecutar en el caso de que el **localStorage** tenga una partida guardada. Esa comprobación se hará cuando se ejecute la función **onMounted()**, del ciclo de vida de Nuxt. Está función mostrará todas las cartas que contenga el mazo que se le pasa como parámetro. La segunda se ejecuta cuando el usuario quiere reiniciar la partida, o cuando se baraja el mazo auxiliar para volver a colocar las cartas en el tablero. Se encarga de borrar todos los elementos HTML, que se correspondan con las cartas del mazo que se le pasa como parámetro.
+
+![Funciones showPileFromLocalStorage y clearPile]()
+
+Las próximas funciones son **clearPiles()** y **showCards()**. **clearPiles()** se ejecuta cuando el usuario quiere reiniciar la partida, y se encarga de borrar todas las cartas de los 4 mazos principales, del mazo auxiliar y del tablero. Para ello elimina los elementos HTML haciendo uso de la función **clearPile()** y vacia los arrays. **showCards()** se ejecuta al comenzar una partida nueva, al cargar una partida guardada en el **localStorage** o al barajar el mazo auxiliar. Se encarga de mostrar todas las cartas del mazo que se le pasa como parámetro, creando los elementos HTML correspondientes y añadiéndolos al elemento del propio mazo.
+
+![Funciones clearPiles y showCards]()
+
+Las funciones **alignCards()** y **makeDraggable()** son la que siguen en el código. La primera se encarga de alinear las cartas del tablero, de tal forma que formen una diagonal desde la esquina superior izquierda, dónde cada carta se va a superponer a la siguiente, y la segunda de hacer arrastrable una determinada carta, que se le pasa como parámetro. La primera se ejecuta cuando el usuario inicia, reinicia o carga una partida, y la segunda en estos mismos casos, y también cuando el usuario mueve una carta del tablero a uno de los mazos.
+
+![Funciones alignCards y makeDraggable]()
