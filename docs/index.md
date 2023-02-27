@@ -170,3 +170,21 @@ Las funciones **alignCards()**, **makeDraggable()** y **updateTime()** son la qu
 Ahora vienen las funciones **dragStart()** y **dragLeave()**. La primera se ejecuta cuando el usuario empieza a arrastrar una carta, y la segunda cuando el arrastre de dicha carta pasa a ser fuera de un mazo. **dragStart()** se encarga de guardar la carta que se está arrastrando, de iniciar el contador del tiempo en caso de que no se haya iniciado ya, y de pasar el ID de la carta que estamos moviendo a la función **onDrop()**. **dragLeave()** se encarga de borrar los efectos visuales que se aplican sobre los mazos cuando se arrastra una carta sobre ellos.
 
 ![Funciones dragStart y dragLeave]()
+
+Seguimos con una de las funciones principales, **dragOver()**. Esta función se ejecuta cuando el usuario arrastra una carta sobre un mazo. Se encarga de añadir los efectos visuales correspondientes, y de dar luz verde, o no, a la función **onDrop()**. Validará que la carta que se está moviendo se pueda colocar en el mazo, teniendo en cuenta el color, el valor y el palo de la carta que se está moviendo, siguiendo las reglas del juego. Los comentarios en el código explican mejor como funciona.
+
+![Función dragOver]()
+
+Ya solo quedan dos funciones, vamos a comentar primero **onDrop()**. Se ejecuta cuando el usuario suelta una carta sobre un mazo, previa validación de que dicha acción se pueda realizar. Se encarga de añadir la carta al mazo correspondiente, de eliminar la carta del mazo actual o tablero inicial, de actualizar la cantidad de movimientos realizados y de comprobar si el usuario ha ganado la partida. Se ve mejor todo lo que hace en los comentarios del código.
+
+![Función onDrop]()
+
+![Función onDrop]()
+
+Por último, la función **onMounted()**. Esta función se ejecuta cuando se renderiza la página, como ya hemos comentado en más de una ocasión a lo largo de esta documentación. Se encarga de comprobar si el **localStorage** tiene una partida guardada y cargarla en caso de que así sea, de llamar a la función que actualiza el tiempo cada segundo, de comprobar si la pantalla es táctil o demasiado pequeña, redireccionando a otro apartado de la web en caso afirmativo, de coger las mejores estadísticas guardadas en el **localStorage** en caso de que las haya, y de crear un evento que prevendrá al usuario de recargar la página, o salir de ella, en caso de que esté jugando una partida. Los comentarios del código detallan como realiza cada una de estas tareas.
+
+![Función onMounted]()
+
+![Función onMounted]()
+
+![Función onMounted]()

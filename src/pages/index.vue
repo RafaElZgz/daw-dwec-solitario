@@ -606,8 +606,12 @@ onMounted(() => {
         start();
     }
 
-    // Se establece un evento que se ejecuta cuando se cierra la página. Aquí se pregunta si se está seguro de querer salir y se guarda la partida en curso en el localStorage.
+    // Se establece un evento que se ejecuta cuando se cierra la página, cuando hay un partida en curso.
+    // Aquí se pregunta si se está seguro de querer salir y se guarda la partida en curso en el localStorage.
     window.onbeforeunload = function (event) {
+        if (!isPlaying) {
+            return;
+        }
         // Objeto que contiene el estado de la partida en curso.
         current_game_status = {
             isPlaying: isPlaying,
