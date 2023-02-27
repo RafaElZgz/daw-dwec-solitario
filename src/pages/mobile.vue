@@ -1,4 +1,6 @@
-<script></script>
+<script>
+// En está página se indica que el juego no es jugable en dispositivos móviles o táctiles.
+</script>
 <template>
     <div>
         <main class="flex h-screen">
