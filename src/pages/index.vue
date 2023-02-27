@@ -49,6 +49,16 @@ if (cards_per_suite > 12 || cards_per_suite < 1) {
     );
 }
 
+// Listado de instrucciones del juego.
+const instructions = [
+    'El objetivo es repartir las 48 cartas en 4 mazos distintos, de 12 cartas cada uno.',
+    'Hay que colocar las cartas en orden de mayor a menor valor, comenzando con el número 12.',
+    'Una carta no puede colocarse encima de otra de su mismo color.',
+    'Utiliza el mazo auxiliar (de color azul) para almacenar las cartas que no puedas colocar.',
+    'Cuando ya no haya más cartas por sacar, las cartas del mazo auxiliar se mezclaran y volverán a estar disponibles.',
+    'El juego termina cuando el mazo auxiliar esté vacío y no haya más cartas por sacar.',
+];
+
 // Variables del juego que van a ir cambiando.
 
 let amount_movements = 0; // Cantidad de movimientos que ha realizado el usuario en la partida.
@@ -96,16 +106,6 @@ let current_game_status = {} as {
         pile_4: Pile;
     };
 };
-
-// Listado de instrucciones del juego.
-const instructions = [
-    'El objetivo es repartir las 48 cartas en 4 mazos distintos, de 12 cartas cada uno.',
-    'Hay que colocar las cartas en orden de mayor a menor valor, comenzando con el número 12.',
-    'Una carta no puede colocarse encima de otra de su mismo color.',
-    'Utiliza el mazo auxiliar (de color azul) para almacenar las cartas que no puedas colocar.',
-    'Cuando ya no haya más cartas por sacar, las cartas del mazo auxiliar se mezclaran y volverán a estar disponibles.',
-    'El juego termina cuando el mazo auxiliar esté vacío y no haya más cartas por sacar.',
-];
 
 /*
     Funciones del juego.
