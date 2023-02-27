@@ -163,6 +163,10 @@ Las próximas funciones son **clearPiles()** y **showCards()**. **clearPiles()**
 
 ![Funciones clearPiles y showCards]()
 
-Las funciones **alignCards()** y **makeDraggable()** son la que siguen en el código. La primera se encarga de alinear las cartas del tablero, de tal forma que formen una diagonal desde la esquina superior izquierda, dónde cada carta se va a superponer a la siguiente, y la segunda de hacer arrastrable una determinada carta, que se le pasa como parámetro. La primera se ejecuta cuando el usuario inicia, reinicia o carga una partida, y la segunda en estos mismos casos, y también cuando el usuario mueve una carta del tablero a uno de los mazos.
+Las funciones **alignCards()**, **makeDraggable()** y **updateTime()** son la que siguen en el código. La primera se encarga de alinear las cartas del tablero, de tal forma que formen una diagonal desde la esquina superior izquierda, dónde cada carta se va a superponer a la siguiente. La segunda hace que sea arrastrable una determinada carta, que se le pasa como parámetro. La tercera aumenta el tiempo en 1 segundo y convierte el tiempo a string, para poder mostrarlo en la interfaz. **alignCards()** se ejecuta cuando el usuario inicia, reinicia o carga una partida, **makeDraggable()** en estos mismos casos, y también cuando el usuario mueve una carta del tablero a uno de los mazos. **updateTime()** se ejecuta cada segundo, se establece dicho bucle en la función **onMounted()**.
 
-![Funciones alignCards y makeDraggable]()
+![Funciones alignCards, makeDraggable y updateTime()]()
+
+Ahora vienen las funciones **dragStart()** y **dragLeave()**. La primera se ejecuta cuando el usuario empieza a arrastrar una carta, y la segunda cuando el arrastre de dicha carta pasa a ser fuera de un mazo. **dragStart()** se encarga de guardar la carta que se está arrastrando, de iniciar el contador del tiempo en caso de que no se haya iniciado ya, y de pasar el ID de la carta que estamos moviendo a la función **onDrop()**. **dragLeave()** se encarga de borrar los efectos visuales que se aplican sobre los mazos cuando se arrastra una carta sobre ellos.
+
+![Funciones dragStart y dragLeave]()

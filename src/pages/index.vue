@@ -341,6 +341,15 @@ async function makeDraggable(card: Card) {
     card_element.classList.add('cursor-grab'); // Agrega un efecto visual vía CSS.
 }
 
+// Función que sirve para aumentar el tiempo de juego en 1 segundo (convirtiendo el tiempo a string también). No devuelve nada.
+function updateTime() {
+    if (!isPlaying) return; // Si no se está jugando, no se actualiza el tiempo.
+    played_time += 1;
+    played_time_string.value = new Date(played_time * 1000)
+        .toISOString()
+        .slice(11, 19);
+}
+
 // Función que se ejecuta cuando el event Drag se dispara, esté se le pasa como parámetro. Aparte se le pasa el objeto carta que se está drageando. No devuelve nada.
 function dragStart(event: DragEvent, card: Card) {
     event.dataTransfer!.effectAllowed = 'move';
@@ -522,15 +531,6 @@ async function onDrop(event: DragEvent, new_pile_id: number) {
     }
 
     await makeDraggable(initial_pile.array[initial_pile.array.length - 1]);
-}
-
-// Función que sirve para aumentar el tiempo de juego en 1 segundo (convirtiendo el tiempo a string también). No devuelve nada.
-function updateTime() {
-    if (!isPlaying) return; // Si no se está jugando, no se actualiza el tiempo.
-    played_time += 1;
-    played_time_string.value = new Date(played_time * 1000)
-        .toISOString()
-        .slice(11, 19);
 }
 
 /* 
