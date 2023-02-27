@@ -136,3 +136,13 @@ Luego se declaran e inicializan las variables y constantes que se van a usar. Ha
 ![Constantes]()
 
 ![Variables]()
+
+Después viene la parte en la que se crean las funciones, comenzando por la función **start()** y **restart()**. La primera se ejecuta siempre que empiece una partida nueva. La segunda cuando el usuario quiere reiniciar la partida, ya sea por medio del botón o tras ganar una partida. Si **localStorgae** ya tiene una partida guardada, la función **start()** no se va a ejecutar.
+
+![Funciones start y restart]()
+
+Las siguientes dos funciones son **endGame()** y **sleep()**. Está última tiene como proposito hacer que el navegador espere un tiempo antes de ejecutar la siguiente instrucción. Se usa para crear efecto visual en la función **alignCards()**. La función **endGame()** se ejecuta cuando el usuario gana la partida, y se encarga de guardar las estadísticas de la partida actual en el **localStorage**, en caso de batir las mejores ya guardadas.
+
+![Funciones endGame y sleep]()
+
+Luego vienen las funciones **generateCards()** y **shuffleCards()**. Ambas funciones devuelven un array del objeto Carta. Ambas se ejecutan en la función **start()**, aunque tambien se usan en algún otro contexto, como cuando ...
