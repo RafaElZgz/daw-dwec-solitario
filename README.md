@@ -1,10 +1,8 @@
 # Proyecto de juego web - Solitario
 
-## Para DAW - Desarrollo web en entorno cliente
-
 ### Descripción
 
-Esta es una versión especial del juego del solitario. Es un proyecto estudiantil que no pretende ser un juego comercial.
+Esta es una versión especial del juego del solitario. Es un proyecto que no pretende ser un juego comercial.
 
 ⚠️ Se puede probar en [alastuey.ovh](https://www.alastuey.ovh/)
 
